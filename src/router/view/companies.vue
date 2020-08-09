@@ -11,7 +11,7 @@ import api from "@/api";
 export default {
   page: {
     title: "Companies",
-    meta: [{ name: "description", content: appConfig.description }]
+    meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout, PageHeader },
   data() {
@@ -22,8 +22,8 @@ export default {
       items: [
         {
           text: "Manage Companies",
-          active: true
-        }
+          active: true,
+        },
       ],
       totalRows: 1,
       currentPage: 1,
@@ -39,8 +39,9 @@ export default {
         { key: "company_vat", sortable: true },
         { key: "company_email", sortable: true },
         { key: "date_created", sortable: true },
-        { key: "action", sortable: false }
-      ]
+        { key: "action", sortable: false },
+      ],
+      editedCompany: null,
     };
   },
   computed: {
@@ -49,11 +50,11 @@ export default {
      */
     rows() {
       return this.tableData.length;
-    }
+    },
   },
   mounted() {
     // Set the initial number of items
-    this.fetch()
+    this.fetch();
   },
   methods: {
     /**
@@ -64,14 +65,22 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetch () {
+    async fetch() {
+      this.isLoading = true;
+      const { data } = await api.companies(null);
+      this.isLoading = false;
+      this.totalRows = data.length;
+      this.tableData = data;
+    },
+    editCompany(row) {
+      this.editedCompany = row.item;
+    },
+    async saveCompany() {
         this.isLoading = true;
-        const { data } = await api.companies(null);
+        const { data } = await api.updateCompany(this.editedCompany);
         this.isLoading = false;
-        this.totalRows = data.length;
-        this.tableData = data;
     }
-  }
+  },
 };
 </script>
 
@@ -82,7 +91,10 @@ export default {
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-body">
+          <div class="card-body text-center" v-if="isLoading">
+            <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+          </div>
+          <div class="card-body" v-else>
             <h4 class="card-title">Manage Companies</h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
@@ -122,7 +134,15 @@ export default {
                 :filter="filter"
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
-              ></b-table>
+              >
+                <template v-slot:cell(action)="row">
+                  <b-button
+                    v-b-modal.modal-standard
+                    @click="editCompany(row)"
+                    variant="outline-primary"
+                  >Edit</b-button>
+                </template>
+              </b-table>
             </div>
             <div class="row">
               <div class="col">
@@ -138,5 +158,66 @@ export default {
         </div>
       </div>
     </div>
+    <b-modal
+      id="modal-standard"
+      title="Company"
+      title-class="font-18"
+      ok-title="Save Changes"
+      cancel-title="Cancel"
+      @ok="saveCompany"
+    >
+      <h5>EDIT COMPANY DETAILS</h5>
+      <div class="row">
+        <div class="col-12">
+          <form class="form-horizontal" role="form" v-if="editedCompany">
+            <b-form-group
+              id="companyName"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Company Name"
+              label-for="companyName"
+            >
+              <b-form-input for="companyName" v-model="editedCompany.company_name"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="company_address"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Company Address"
+              label-for="company_address"
+            >
+              <textarea
+                v-model="editedCompany.company_address"
+                class="form-control"
+                :maxlength="225"
+                rows="3"
+                placeholder="Company Address"
+              ></textarea>
+            </b-form-group>
+
+            <b-form-group
+              id="company_vat"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="VAT"
+              label-for="company_vat"
+            >
+              <b-form-input id="company_vat" v-model="editedCompany.company_vat" type="number" name="company_vat"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="company_email"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Company Email"
+              label-for="company_email"
+            >
+              <b-form-input id="company_email" v-model="editedCompany.company_email" ></b-form-input>
+            </b-form-group>
+          </form>
+        </div>
+      </div>
+    </b-modal>
   </Layout>
 </template>
