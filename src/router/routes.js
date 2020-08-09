@@ -29,7 +29,7 @@ export default [
     path: '/companies',
     name: 'companies',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/companies'),
   },
   {
     path: '/owners',
