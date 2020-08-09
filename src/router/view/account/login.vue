@@ -99,7 +99,7 @@ export default {
               <div class="col-7">
                 <div class="text-primary p-4">
                   <h5 class="text-primary">Welcome Back !</h5>
-                  <p>Sign in to continue to Skote.</p>
+                  <p>Sign in to continue to Commply.</p>
                 </div>
               </div>
               <div class="col-5 align-self-end">
@@ -112,7 +112,7 @@ export default {
               <router-link tag="a" to="/">
                 <div class="avatar-md profile-user-wid mb-4">
                   <span class="avatar-title rounded-circle bg-light">
-                    <img src="@/assets/images/logo.svg" alt height="34" />
+                    <img src="@/assets/images/logo1.png" alt height="50" />
                   </span>
                 </div>
               </router-link>
@@ -152,33 +152,12 @@ export default {
                   class="invalid-feedback"
                 >Password is required.</div>
               </b-form-group>
-              <div class="custom-control custom-checkbox">
-                <input id="customControlInline" type="checkbox" class="custom-control-input" />
-                <label class="custom-control-label" for="customControlInline">Remember me</label>
-              </div>
               <div class="mt-3">
                 <b-button type="submit" variant="primary" class="btn-block">Log In</b-button>
-              </div>
-              <div class="mt-4 text-center">
-                <router-link tag="a" to="/forgot-password" class="text-muted">
-                  <i class="mdi mdi-lock mr-1"></i> Forgot your password?
-                </router-link>
               </div>
             </b-form>
           </div>
           <!-- end card-body -->
-        </div>
-        <!-- end card -->
-
-        <div class="mt-5 text-center">
-          <p>
-            Don't have an account ?
-            <router-link tag="a" to="/register" class="font-weight-medium text-primary">Signup now</router-link>
-          </p>
-          <p>
-            © {{new Date().getFullYear()}} Skote. Crafted with
-            <i class="mdi mdi-heart text-danger"></i> by Themesbrand
-          </p>
         </div>
         <!-- end row -->
       </div>

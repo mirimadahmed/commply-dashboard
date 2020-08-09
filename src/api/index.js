@@ -16,6 +16,15 @@ export default {
         }
         return axiosObj.get(url)
     },
+    updateCompany(company) {
+        let form = new FormData();
+        form.append('id', company.company_id);
+        form.append('name', company.company_name);
+        form.append('address', company.company_address);
+        form.append('vat', company.company_vat);
+        form.append('email', company.company_email);
+        return axiosObj.post(`/company/update.php`, form)
+    },
     employees(id) {
         let url = `/company/employee/get.php`
         if (id) {

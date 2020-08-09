@@ -95,7 +95,10 @@ export default {
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-body">
+          <div class="card-body text-center" v-if="isLoading">
+            <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+          </div>
+          <div class="card-body" v-else>
             <h4 class="card-title">Manage Risks</h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
