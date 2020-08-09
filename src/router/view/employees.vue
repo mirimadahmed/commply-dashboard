@@ -4,14 +4,13 @@ import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
 
-
 /**
  * Advanced table component
  */
 export default {
   page: {
     title: "Employees",
-    meta: [{ name: "description", content: appConfig.description }]
+    meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout, PageHeader },
   data() {
@@ -22,8 +21,8 @@ export default {
       items: [
         {
           text: "Manage Employees",
-          active: true
-        }
+          active: true,
+        },
       ],
       totalRows: 1,
       currentPage: 1,
@@ -42,8 +41,8 @@ export default {
         { key: "employee_job", sortable: true },
         { key: "employee_telephone", sortable: true },
         { key: "date_created", sortable: true },
-        { key: "action", sortable: false }
-      ]
+        { key: "action", sortable: false },
+      ],
     };
   },
   computed: {
@@ -52,11 +51,11 @@ export default {
      */
     rows() {
       return this.tableData.length;
-    }
+    },
   },
   mounted() {
     // Set the initial number of items
-    this.fetch()
+    this.fetch();
   },
   methods: {
     /**
@@ -67,15 +66,14 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetch () {
-        this.isLoading = true;
-        const { data } = await api.employees(null);
-        console.log(data);
-        this.isLoading = false;
-        this.totalRows = data.length;
-        this.tableData = data;
-    }
-  }
+    async fetch() {
+      this.isLoading = true;
+      const { data } = await api.employees(null);
+      this.isLoading = false;
+      this.totalRows = data.length;
+      this.tableData = data;
+    },
+  },
 };
 </script>
 

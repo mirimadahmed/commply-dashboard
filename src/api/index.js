@@ -23,11 +23,8 @@ export default {
         }
         return axiosObj.get(url)
     },
-    owners(id) {
+    owners() {
         let url = `/company/owner/get.php`
-        if (id) {
-            url += `?id=${id}`
-        }
         return axiosObj.get(url)
     },
     users(page) {
