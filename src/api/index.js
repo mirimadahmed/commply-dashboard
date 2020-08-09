@@ -27,6 +27,10 @@ export default {
         let url = `/company/owner/get.php`
         return axiosObj.get(url)
     },
+    risks() {
+        let url = `/company/risks.php`
+        return axiosObj.get(url)
+    },
     users(page) {
         return axiosObj.get(`/get_users.php?page=${page}`)
     },

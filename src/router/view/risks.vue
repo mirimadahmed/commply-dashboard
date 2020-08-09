@@ -2,8 +2,7 @@
 import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
-
-import { tableData } from "./dataAdvancedtable";
+import api from "@/api";
 
 /**
  * Advanced table component
@@ -11,18 +10,19 @@ import { tableData } from "./dataAdvancedtable";
 export default {
   page: {
     title: "Risks",
-    meta: [{ name: "description", content: appConfig.description }]
+    meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout, PageHeader },
   data() {
     return {
-      tableData: tableData,
+      tableData: [],
+      isLoading: false,
       title: "Risks",
       items: [
         {
           text: "Manage Risks",
-          active: true
-        }
+          active: true,
+        },
       ],
       totalRows: 1,
       currentPage: 1,
@@ -30,16 +30,30 @@ export default {
       pageOptions: [10, 25, 50, 100],
       filter: null,
       filterOn: [],
-      sortBy: "age",
+      sortBy: "company_name",
       sortDesc: false,
       fields: [
-        { key: "name", sortable: true },
-        { key: "address", sortable: true },
-        { key: "vat", sortable: true },
-        { key: "email", sortable: true },
-        { key: "date", sortable: true },
-        { key: "action", sortable: true }
-      ]
+        { key: "status", sortable: true },
+        { key: "company_name", sortable: true },
+        { key: "site", sortable: true },
+        { key: "sector", sortable: true },
+        { key: "department", sortable: true },
+        { key: "work_area", sortable: true },
+        { key: "occupations", sortable: true },
+        { key: "risk_assessor", sortable: true },
+        { key: "employer_representative", sortable: true },
+        { key: "health_safety_representative", sortable: true },
+        { key: "source_of_hazard", sortable: true },
+        { key: "route_of_exposure", sortable: true },
+        { key: "activities", sortable: true },
+        { key: "existing_control_measure", sortable: true },
+        { key: "control_effectiveness", sortable: true },
+        { key: "addition_controls", sortable: true },
+        { key: "due_date", sortable: true },
+        { key: "risk_classification", sortable: true },
+        { key: "date_created", sortable: true },
+
+      ],
     };
   },
   computed: {
@@ -48,11 +62,11 @@ export default {
      */
     rows() {
       return this.tableData.length;
-    }
+    },
   },
   mounted() {
     // Set the initial number of items
-    this.totalRows = this.items.length;
+    this.fetch();
   },
   methods: {
     /**
@@ -62,8 +76,15 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
-    }
-  }
+    },
+    async fetch() {
+      this.isLoading = true;
+      const { data } = await api.risks();
+      this.isLoading = false;
+      this.totalRows = data.length;
+      this.tableData = data;
+    },
+  },
 };
 </script>
 
