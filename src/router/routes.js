@@ -35,19 +35,19 @@ export default [
     path: '/owners',
     name: 'owners',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/owners'),
   },
   {
     path: '/employees',
     name: 'employees',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/employees'),
   },
   {
     path: '/risk-management',
     name: 'risk management',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/risks'),
   },
   {
     path: '/contact-tracing',
