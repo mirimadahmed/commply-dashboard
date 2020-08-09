@@ -2,8 +2,8 @@
 import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
+import api from "@/api";
 
-import { tableData } from "./dataAdvancedtable";
 
 /**
  * Advanced table component
@@ -16,7 +16,8 @@ export default {
   components: { Layout, PageHeader },
   data() {
     return {
-      tableData: tableData,
+      tableData: [],
+      isLoading: false,
       title: "Employees",
       items: [
         {
@@ -30,15 +31,18 @@ export default {
       pageOptions: [10, 25, 50, 100],
       filter: null,
       filterOn: [],
-      sortBy: "age",
+      sortBy: "company_name",
       sortDesc: false,
       fields: [
-        { key: "name", sortable: true },
-        { key: "address", sortable: true },
-        { key: "vat", sortable: true },
-        { key: "email", sortable: true },
-        { key: "date", sortable: true },
-        { key: "action", sortable: true }
+        { key: "company_name", sortable: true },
+        { key: "employee_firstname", sortable: true },
+        { key: "employee_middlename", sortable: true },
+        { key: "employee_lastname", sortable: true },
+        { key: "employee_number", sortable: true },
+        { key: "employee_job", sortable: true },
+        { key: "employee_telephone", sortable: true },
+        { key: "date_created", sortable: true },
+        { key: "action", sortable: false }
       ]
     };
   },
@@ -52,7 +56,7 @@ export default {
   },
   mounted() {
     // Set the initial number of items
-    this.totalRows = this.items.length;
+    this.fetch()
   },
   methods: {
     /**
@@ -62,6 +66,14 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
+    },
+    async fetch () {
+        this.isLoading = true;
+        const { data } = await api.employees(null);
+        console.log(data);
+        this.isLoading = false;
+        this.totalRows = data.length;
+        this.tableData = data;
     }
   }
 };

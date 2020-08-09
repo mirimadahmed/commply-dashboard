@@ -2,9 +2,7 @@ import axios from 'axios'
 
 const axiosObj = axios.create({
     baseURL: 'http://localhost/commply-api/',
-    // headers: { 'Cache-Control': 'no-cache' }
     headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:8080',
         'Cache-Control': 'no-cache'
       }
 })
@@ -13,6 +11,20 @@ const axiosObj = axios.create({
 export default {
     companies(id) {
         let url = `/company/get.php`
+        if (id) {
+            url += `?id=${id}`
+        }
+        return axiosObj.get(url)
+    },
+    employees(id) {
+        let url = `/company/employee/get.php`
+        if (id) {
+            url += `?id=${id}`
+        }
+        return axiosObj.get(url)
+    },
+    owners(id) {
+        let url = `/company/owner/get.php`
         if (id) {
             url += `?id=${id}`
         }

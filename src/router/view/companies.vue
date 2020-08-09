@@ -67,7 +67,6 @@ export default {
     async fetch () {
         this.isLoading = true;
         const { data } = await api.companies(null);
-        console.log(data);
         this.isLoading = false;
         this.totalRows = data.length;
         this.tableData = data;
