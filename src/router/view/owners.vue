@@ -73,19 +73,27 @@ export default {
       this.tableData = data;
     },
     editOwner(row) {
-      this.editedOwner = row.item;
+      this.editedOwner = JSON.parse(JSON.stringify(row.item));
     },
     deleteOwner(row) {
-      this.editedOwner = row.item;
+      this.editedOwner = JSON.parse(JSON.stringify(row.item));
     },
     async saveOwner() {
       this.isLoading = true;
-      const { data } = await api.saveOwner(this.editedOwner);
+      const { data } = await api.updateOwner(this.editedOwner);
+      const index = this.tableData.findIndex(item => item.owner_id === this.editedOwner.owner_id);
+      if(index > -1) {
+        this.tableData[index] = JSON.parse(JSON.stringify(this.editedOwner));
+      }
       this.isLoading = false;
     },
     async saveDeleteOwner() {
       this.isLoading = true;
       const { data } = await api.deleteOwner(this.editedOwner);
+      const index = this.tableData.findIndex(item => item.owner_id === this.editedOwner.owner_id);
+      if(index > -1) {
+        this.tableData.splice(index, 1);
+      }
       this.isLoading = false;
     }
   },

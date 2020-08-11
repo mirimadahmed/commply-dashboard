@@ -50,6 +50,12 @@ export default [
     component: () => import('./view/employee'),
   },
   {
+    path: '/view-company',
+    name: 'view company',
+    meta: { authRequired: true },
+    component: () => import('./view/company'),
+  },
+  {
     path: '/risk-management',
     name: 'risk management',
     meta: { authRequired: true },

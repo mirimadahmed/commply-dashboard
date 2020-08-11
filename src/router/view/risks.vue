@@ -39,6 +39,23 @@ export default {
         { key: "sector", sortable: true },
         { key: "department", sortable: true },
         { key: "work_area", sortable: true },
+        // { key: "occupations", sortable: true },
+        // { key: "risk_assessor", sortable: true },
+        // { key: "employer_representative", sortable: true },
+        // { key: "health_safety_representative", sortable: true },
+        // { key: "source_of_hazard", sortable: true },
+        // { key: "route_of_exposure", sortable: true },
+        // { key: "activities", sortable: true },
+        // { key: "existing_control_measure", sortable: true },
+        // { key: "control_effectiveness", sortable: true },
+        // { key: "addition_controls", sortable: true },
+        // { key: "due_date", sortable: true },
+        // { key: "risk_classification", sortable: true },
+        { key: "date_created", sortable: true },
+        { key: "action", sortable: false },
+      ],
+      risk: null,
+      modalFields: [
         { key: "occupations", sortable: true },
         { key: "risk_assessor", sortable: true },
         { key: "employer_representative", sortable: true },
@@ -51,9 +68,7 @@ export default {
         { key: "addition_controls", sortable: true },
         { key: "due_date", sortable: true },
         { key: "risk_classification", sortable: true },
-        { key: "date_created", sortable: true },
-
-      ],
+      ]
     };
   },
   computed: {
@@ -84,6 +99,12 @@ export default {
       this.totalRows = data.length;
       this.tableData = data;
     },
+    viewRisk(row) {
+      this.risk = row.item;
+    },
+    getName(field) {
+      return field.split('_').join(' ')
+    }
   },
 };
 </script>
@@ -138,7 +159,16 @@ export default {
                 :filter="filter"
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
-              ></b-table>
+              >
+              <template v-slot:cell(action)="row">
+                  <b-button
+                    v-b-modal.modal-view
+                    @click="viewRisk(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >View</b-button>
+                </template>
+              </b-table>
             </div>
             <div class="row">
               <div class="col">
@@ -154,5 +184,19 @@ export default {
         </div>
       </div>
     </div>
+    <b-modal
+      id="modal-view"
+      title="Risk"
+      title-class="font-18"
+    >
+      <h5>Risk DETAILS</h5>
+      <div class="row" v-if="risk">
+        <div class="col-12">
+          <h5 v-for="field in modalFields" :key="field.key">
+            {{getName(field.key)}} - {{risk[field.key]}}
+          </h5>
+        </div>
+      </div>
+    </b-modal>
   </Layout>
 </template>

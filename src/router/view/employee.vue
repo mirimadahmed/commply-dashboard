@@ -1,6 +1,8 @@
 <script>
 import Layout from "../layouts/main";
 import Declaration from "@/components/widgets/declaration";
+import Profile from "@/components/widgets/profile";
+import Meetings from "@/components/widgets/meetings";
 import DeclarationStat from "@/components/widgets/declaration-stat";
 import DailyCheck from "@/components/widgets/daily-check";
 import api from "@/api";
@@ -11,6 +13,8 @@ export default {
     Declaration,
     DeclarationStat,
     DailyCheck,
+    Profile,
+    Meetings,
   },
   mounted() {
     this.id = this.$route.query.id;
@@ -65,7 +69,8 @@ export default {
         this.hasDeclaration = false;
       }
       this.locationLogs = data.location_logs;
-
+      this.meetings = data.meetings;
+      this.profile = data.employee[0];
       this.isLoading = false;
     },
   },
@@ -87,70 +92,85 @@ export default {
       ],
       declarationPercentage: [80],
       checks: [],
+      meetings: [],
+      profile: null,
     };
   },
 };
 </script>
 
 <template>
-  <Layout v-if="!isLoading">
-    <div class="row" v-if="hasDeclaration">
-      <div class="col-xl-4">
-        <DeclarationStat :series="declarationPercentage" />
-      </div>
-      <!-- end col -->
-      <div class="col-xl-8">
-        <Declaration :series="declarations" />
-      </div>
+  <Layout>
+    <div class="card-body text-center" v-if="isLoading">
+      <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
     </div>
-    <div class="row my-4">
-      <div class="col-xl-12">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title mb-5">Location Logs</h4>
-            <ul class="verti-timeline list-unstyled" v-if="locationLogs.length > 0">
-              <li
-                class="event-list"
-                v-for="locationLog in locationLogs"
-                :key="locationLog.location_id"
-              >
-                <div class="event-timeline-dot">
-                  <i class="bx bx-right-arrow-circle font-size-18"></i>
-                </div>
-                <div class="media">
-                  <div class="mr-3">
-                    <h5 class="font-size-14">
-                      {{locationLog.time_created}} - {{locationLog.current_location}}
-                      <i
-                        class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ml-2"
-                      ></i>
-                    </h5>
+    <div v-else>
+      <div class="row">
+        <div class="col-xl-4">
+          <Profile :profile="profile" class="mb-4" />
+          <DeclarationStat v-if="hasDeclaration" :series="declarationPercentage" />
+        </div>
+        <!-- end col -->
+        <div class="col-xl-8" v-if="hasDeclaration">
+          <Declaration :series="declarations" />
+        </div>
+      </div>
+      <div class="row my-4">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-5">Location Logs</h4>
+              <ul class="verti-timeline list-unstyled" v-if="locationLogs.length > 0">
+                <li
+                  class="event-list"
+                  v-for="locationLog in locationLogs"
+                  :key="locationLog.location_id"
+                >
+                  <div class="event-timeline-dot">
+                    <i class="bx bx-right-arrow-circle font-size-18"></i>
                   </div>
-                  <div class="media-body">
-                    <div>{{locationLog.next_location}}</div>
+                  <div class="media">
+                    <div class="mr-3">
+                      <h5 class="font-size-14">
+                        {{locationLog.time_created}} - {{locationLog.current_location}}
+                        <i
+                          class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ml-2"
+                        ></i>
+                      </h5>
+                    </div>
+                    <div class="media-body">
+                      <div>{{locationLog.next_location}}</div>
+                    </div>
                   </div>
-                </div>
-              </li>
-            </ul>
-            <div v-else class="text text-center">
-                No data.
+                </li>
+              </ul>
+              <div v-else class="text text-center">No data.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-4">Daily Checks</h4>
+              <DailyCheck :checks="checks" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card my-4">
+            <div class="card-body">
+              <h4 class="card-title">Meetings</h4>
+              <Meetings :meetings="meetings" />
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title mb-4">Daily Checks</h4>
-            <DailyCheck :checks="checks" />
-          </div>
-        </div>
-      </div>
-      <!-- end col -->
-    </div>
-    <!-- end row -->
   </Layout>
 </template>

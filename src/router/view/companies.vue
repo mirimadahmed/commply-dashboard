@@ -73,13 +73,22 @@ export default {
       this.tableData = data;
     },
     editCompany(row) {
-      this.editedCompany = row.item;
+      this.editedCompany = JSON.parse(JSON.stringify(row.item));
+    },
+    viewCompany(row) {
+      this.$router.push(`/view-company?id=${row.item.company_id}`);
     },
     async saveCompany() {
-        this.isLoading = true;
-        const { data } = await api.updateCompany(this.editedCompany);
-        this.isLoading = false;
-    }
+      this.isLoading = true;
+      const { data } = await api.updateCompany(this.editedCompany);
+      const index = this.tableData.findIndex(
+        (item) => item.company_id === this.editedCompany.company_id
+      );
+      if (index > -1) {
+        this.tableData[index] = JSON.parse(JSON.stringify(this.editedCompany));
+      }
+      this.isLoading = false;
+    },
   },
 };
 </script>
@@ -140,7 +149,9 @@ export default {
                     v-b-modal.modal-standard
                     @click="editCompany(row)"
                     variant="outline-primary"
+                    class="mr-1"
                   >Edit</b-button>
+                  <b-button @click="viewCompany(row)" variant="outline-primary">View</b-button>
                 </template>
               </b-table>
             </div>
@@ -203,7 +214,12 @@ export default {
               label="VAT"
               label-for="company_vat"
             >
-              <b-form-input id="company_vat" v-model="editedCompany.company_vat" type="number" name="company_vat"></b-form-input>
+              <b-form-input
+                id="company_vat"
+                v-model="editedCompany.company_vat"
+                type="number"
+                name="company_vat"
+              ></b-form-input>
             </b-form-group>
 
             <b-form-group
@@ -213,7 +229,7 @@ export default {
               label="Company Email"
               label-for="company_email"
             >
-              <b-form-input id="company_email" v-model="editedCompany.company_email" ></b-form-input>
+              <b-form-input id="company_email" v-model="editedCompany.company_email"></b-form-input>
             </b-form-group>
           </form>
         </div>

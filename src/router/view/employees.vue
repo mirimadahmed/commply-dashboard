@@ -133,7 +133,6 @@ export default {
               >
               <template v-slot:cell(action)="row">
                   <b-button
-                    v-b-modal.modal-edit
                     @click="viewEmployee(row)"
                     variant="outline-primary"
                     class="mr-1"
