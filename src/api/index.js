@@ -1,14 +1,21 @@
 import axios from 'axios'
 
 const axiosObj = axios.create({
-    baseURL: 'http://localhost/commply-api/',
+    baseURL: 'http://localhost/commply-api',
     headers: {
         'Cache-Control': 'no-cache'
-      }
+    }
 })
 
 
 export default {
+    adminLogin(admin) {
+        let form = new FormData();
+        form.append('type', "admin");
+        form.append('email', admin.email);
+        form.append('password', admin.password);
+        return axiosObj.post(`/auth/login.php`, form)
+    },
     companies(id) {
         let url = `/company/get.php`
         if (id) {
@@ -35,6 +42,21 @@ export default {
     owners() {
         let url = `/company/owner/get.php`
         return axiosObj.get(url)
+    },
+    updateOwner(owner) {
+        let form = new FormData();
+        form.append('id', owner.owner_id);
+        form.append('firstname', owner.owner_firstname);
+        form.append('lastname', owner.owner_lastname);
+        form.append('email', owner.owner_email);
+        form.append('password', owner.owner_password);
+        form.append('company', owner.company_id);
+        return axiosObj.post(`/company/owner/update.php`, form)
+    },
+    deletOwner(owner) {
+        let form = new FormData();
+        form.append('id', owner.owner_id);
+        return axiosObj.post(`/company/owner/delete.php`, form)
     },
     risks() {
         let url = `/company/risks.php`

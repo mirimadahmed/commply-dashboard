@@ -44,6 +44,12 @@ export default [
     component: () => import('./view/employees'),
   },
   {
+    path: '/view-employee',
+    name: 'view employee',
+    meta: { authRequired: true },
+    component: () => import('./view/employee'),
+  },
+  {
     path: '/risk-management',
     name: 'risk management',
     meta: { authRequired: true },

@@ -73,6 +73,9 @@ export default {
       this.totalRows = data.length;
       this.tableData = data;
     },
+    viewEmployee(row) {
+      this.$router.push(`/view-employee?id=${row.item.employee_id}`);
+    }
   },
 };
 </script>
@@ -127,7 +130,16 @@ export default {
                 :filter="filter"
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
-              ></b-table>
+              >
+              <template v-slot:cell(action)="row">
+                  <b-button
+                    v-b-modal.modal-edit
+                    @click="viewEmployee(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >View</b-button>
+                </template>
+              </b-table>
             </div>
             <div class="row">
               <div class="col">

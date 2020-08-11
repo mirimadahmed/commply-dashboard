@@ -41,6 +41,7 @@ export default {
         { key: "date_created", sortable: true },
         { key: "action", sortable: false },
       ],
+      editedOwner: null
     };
   },
   computed: {
@@ -71,6 +72,22 @@ export default {
       this.totalRows = data.length;
       this.tableData = data;
     },
+    editOwner(row) {
+      this.editedOwner = row.item;
+    },
+    deleteOwner(row) {
+      this.editedOwner = row.item;
+    },
+    async saveOwner() {
+      this.isLoading = true;
+      const { data } = await api.saveOwner(this.editedOwner);
+      this.isLoading = false;
+    },
+    async saveDeleteOwner() {
+      this.isLoading = true;
+      const { data } = await api.deleteOwner(this.editedOwner);
+      this.isLoading = false;
+    }
   },
 };
 </script>
@@ -125,7 +142,21 @@ export default {
                 :filter="filter"
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
-              ></b-table>
+              >
+              <template v-slot:cell(action)="row">
+                  <b-button
+                    v-b-modal.modal-edit
+                    @click="editOwner(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >Edit</b-button>
+                  <b-button
+                    v-b-modal.modal-delete
+                    @click="deleteOwner(row)"
+                    variant="outline-primary"
+                  >Delete</b-button>
+                </template>
+              </b-table>
             </div>
             <div class="row">
               <div class="col">
@@ -141,5 +172,75 @@ export default {
         </div>
       </div>
     </div>
+    <b-modal
+      id="modal-edit"
+      title="Owner"
+      title-class="font-18"
+      ok-title="Save Changes"
+      cancel-title="Cancel"
+      @ok="saveOwner"
+    >
+      <h5>EDIT OWNER DETAILS</h5>
+      <div class="row">
+        <div class="col-12">
+          <form class="form-horizontal" role="form" v-if="editedOwner">
+            <b-form-group
+              id="owner_email"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Owner Email"
+              label-for="owner_email"
+            >
+              <b-form-input id="owner_email" v-model="editedOwner.owner_email" ></b-form-input>
+            </b-form-group>
+            
+            <b-form-group
+              id="owner_password"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Owner Password"
+              label-for="owner_password"
+            >
+              <b-form-input for="owner_password" v-model="editedOwner.owner_password"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="owner_firstname"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="First Name"
+              label-for="owner_firstname"
+            >
+              <b-form-input for="owner_firstname" v-model="editedOwner.owner_firstname"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="owner_lastname"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label="Last Name"
+              label-for="owner_lastname"
+            >
+              <b-form-input for="owner_lastname" v-model="editedOwner.owner_lastname"></b-form-input>
+            </b-form-group>
+          </form>
+        </div>
+      </div>
+    </b-modal>
+    <b-modal
+      id="modal-delete"
+      title="Owner"
+      title-class="font-18"
+      ok-title="Delete"
+      cancel-title="Cancel"
+      @ok="saveDeleteOwner"
+    >
+      <h5>Delete Owner</h5>
+      <div class="row">
+        <div class="col-12">
+          <p>Are you sure you want to delete this owner?</p>
+        </div>
+      </div>
+    </b-modal>
   </Layout>
 </template>
