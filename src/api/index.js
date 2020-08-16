@@ -111,5 +111,8 @@ export default {
         form.append('is_owner', report.is_owner);
         form.append('company_id', report.company_id);
         return axiosObj.post(`/company/print_risk_report.php`, form)
+    },
+    walkthroughs(setting) {
+        return axiosObj.get(`/company/walkthroughs.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}`)
     }
 }

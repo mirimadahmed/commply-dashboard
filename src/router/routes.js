@@ -83,7 +83,7 @@ export default [
     path: '/print-walkthrough',
     name: 'print walkthrough',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/print-walkthroughs'),
   },
   {
     path: '/login',
