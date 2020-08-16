@@ -9,7 +9,7 @@ import api from "@/api";
  */
 export default {
   page: {
-    title: "Print Report",
+    title: "Get Report",
     meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout, PageHeader },
@@ -17,10 +17,10 @@ export default {
     return {
       tableData: [],
       isLoading: false,
-      title: "Print Report",
+      title: "Get Report",
       items: [
         {
-          text: "Print Report",
+          text: "Get Report",
           active: true,
         },
       ],

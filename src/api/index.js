@@ -86,5 +86,30 @@ export default {
         form.append('is_owner', report.is_owner);
         form.append('company_id', report.company_id);
         return axiosObj.post(`/print_report.php`, form)
+    },
+    buildings() {
+        return axiosObj.get(`/company/buildings.php`)
+    },
+    print_declarations(report) {
+        let form = new FormData();
+        form.append('employee_number', report.employee_number);
+        form.append('is_owner', report.is_owner);
+        form.append('company_id', report.company_id);
+        return axiosObj.post(`/company/employee/declaration.php`, form)
+    },
+    print_walkthroughs(report) {
+        let form = new FormData();
+        form.append('buliding', report.buliding);
+        form.append('date', report.date);
+        form.append('is_owner', report.is_owner);
+        form.append('company_id', report.company_id);
+        return axiosObj.post(`/company/print_walkthrough.php`, form)
+    },
+    print_risk_report(report) {
+        let form = new FormData();
+        form.append('risk_id', report.risk_id);
+        form.append('is_owner', report.is_owner);
+        form.append('company_id', report.company_id);
+        return axiosObj.post(`/company/print_risk_report.php`, form)
     }
 }
