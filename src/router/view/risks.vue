@@ -68,7 +68,25 @@ export default {
         { key: "addition_controls", sortable: true },
         { key: "due_date", sortable: true },
         { key: "risk_classification", sortable: true },
-      ]
+      ],
+      risk_options: [
+        {
+          text: "Select a status",
+          value: null,
+        },
+        {
+          text: "Closed",
+          value: "Closed",
+        },
+        {
+          text: "In Progress",
+          value: "In Progress",
+        },
+        {
+          text: "Open",
+          value: "Open",
+        },
+      ],
     };
   },
   computed: {
@@ -100,11 +118,24 @@ export default {
       this.tableData = data;
     },
     viewRisk(row) {
-      this.risk = row.item;
+      this.risk = JSON.parse(JSON.stringify(row.item));
     },
     getName(field) {
-      return field.split('_').join(' ')
-    }
+      return field.split("_").join(" ");
+    },
+    async updateStatus() {
+      this.isLoading = true;
+      const { data } = await api.updateRisk(this.risk);
+      if (data.error === 0) {
+        const index = this.tableData.findIndex(
+          (item) => item.risk_id === this.risk.risk_id
+        );
+        if (index > -1) {
+          this.tableData[index] = JSON.parse(JSON.stringify(this.risk));
+        }
+      }
+      this.isLoading = false;
+    },
   },
 };
 </script>
@@ -160,13 +191,19 @@ export default {
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
               >
-              <template v-slot:cell(action)="row">
+                <template v-slot:cell(action)="row">
                   <b-button
                     v-b-modal.modal-view
                     @click="viewRisk(row)"
                     variant="outline-primary"
                     class="mr-1"
                   >View</b-button>
+                  <b-button
+                    v-b-modal.modal-edit
+                    @click="viewRisk(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >Update Status</b-button>
                 </template>
               </b-table>
             </div>
@@ -184,18 +221,35 @@ export default {
         </div>
       </div>
     </div>
-    <b-modal
-      id="modal-view"
-      title="Risk"
-      title-class="font-18"
-    >
+    <b-modal id="modal-view" title="Risk" title-class="font-18">
       <h5>Risk DETAILS</h5>
       <div class="row" v-if="risk">
         <div class="col-12">
-          <h5 v-for="field in modalFields" :key="field.key">
-            {{getName(field.key)}} - {{risk[field.key]}}
-          </h5>
+          <h5
+            v-for="field in modalFields"
+            :key="field.key"
+          >{{getName(field.key)}} - {{risk[field.key]}}</h5>
         </div>
+      </div>
+    </b-modal>
+    <b-modal
+      id="modal-edit"
+      title="Risk Status"
+      title-class="font-18"
+      @ok="updateStatus"
+      ok-title="Update Status"
+    >
+      <h5>Update Risk Status</h5>
+      <div v-if="risk">
+        <b-form-group
+          id="risk_status"
+          label-cols-sm="2"
+          label-cols-lg="3"
+          label="Risk Status"
+          label-for="risk_status"
+        >
+          <b-form-select v-model="risk.status" :options="risk_options"></b-form-select>
+        </b-form-group>
       </div>
     </b-modal>
   </Layout>

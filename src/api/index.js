@@ -71,5 +71,11 @@ export default {
     risks() {
         let url = `/company/risks.php`
         return axiosObj.get(url)
+    },
+    updateRisk(risk) {
+        let form = new FormData();
+        form.append('id', risk.risk_id);
+        form.append('status', risk.status);
+        return axiosObj.post(`/company/update_risk.php`, form)
     }
 }
