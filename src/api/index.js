@@ -77,5 +77,14 @@ export default {
         form.append('id', risk.risk_id);
         form.append('status', risk.status);
         return axiosObj.post(`/company/update_risk.php`, form)
+    },
+    print_reports(report) {
+        let form = new FormData();
+        form.append('table_name', report.table_name);
+        form.append('start', report.start);
+        form.append('end', report.end);
+        form.append('is_owner', report.is_owner);
+        form.append('company_id', report.company_id);
+        return axiosObj.post(`/print_report.php`, form)
     }
 }

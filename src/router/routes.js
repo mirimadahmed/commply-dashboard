@@ -71,13 +71,13 @@ export default [
     path: '/reports',
     name: 'get reports',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/print-report'),
   },
   {
     path: '/print-reports',
     name: 'print reports',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/print-report'),
   },
   {
     path: '/print-walkthrough',
