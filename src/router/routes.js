@@ -17,7 +17,7 @@ export default [
     path: '/visitor-dashboard',
     name: 'visitor dashboard',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/visitor-dashboard'),
   },
   {
     path: '/risk-dashboard',
