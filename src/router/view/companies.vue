@@ -2,6 +2,7 @@
 import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
+import { mapState } from "vuex";
 
 import api from "@/api";
 
@@ -51,10 +52,14 @@ export default {
     rows() {
       return this.tableData.length;
     },
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
   mounted() {
     // Set the initial number of items
-    this.fetch();
+    let company_id = this.user.company_id ? this.user.company_id : null;
+    this.fetch(company_id);
   },
   methods: {
     /**
@@ -65,12 +70,17 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetch() {
+    async fetch(company_id) {
       this.isLoading = true;
-      const { data } = await api.companies(null);
+      const { data } = await api.companies(company_id);
+      if(data.hasOwnProperty('company')) {
+        this.tableData = [data.company];
+        this.totalRows = 1;
+      } else {
+        this.totalRows = data.length;
+        this.tableData = data;
+      }
       this.isLoading = false;
-      this.totalRows = data.length;
-      this.tableData = data;
     },
     editCompany(row) {
       this.editedCompany = JSON.parse(JSON.stringify(row.item));

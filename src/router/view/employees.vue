@@ -3,6 +3,7 @@ import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
+import { mapState } from "vuex";
 
 /**
  * Advanced table component
@@ -52,10 +53,14 @@ export default {
     rows() {
       return this.tableData.length;
     },
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
   mounted() {
     // Set the initial number of items
-    this.fetch();
+    let company_id = this.user.company_id ? this.user.company_id : null;
+    this.fetch(company_id);
   },
   methods: {
     /**
@@ -66,16 +71,23 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetch() {
+    async fetch(company_id) {
       this.isLoading = true;
-      const { data } = await api.employees(null);
+      if (company_id === null) {
+        const { data } = await api.employees(company_id);
+        this.totalRows = data.length;
+        this.tableData = data;
+      } else {
+        const { data } = await api.allEmployees(company_id);
+        this.totalRows = data.length;
+        this.tableData = data;
+      }
+
       this.isLoading = false;
-      this.totalRows = data.length;
-      this.tableData = data;
     },
     viewEmployee(row) {
       this.$router.push(`/view-employee?id=${row.item.employee_id}`);
-    }
+    },
   },
 };
 </script>
@@ -131,12 +143,8 @@ export default {
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
               >
-              <template v-slot:cell(action)="row">
-                  <b-button
-                    @click="viewEmployee(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >View</b-button>
+                <template v-slot:cell(action)="row">
+                  <b-button @click="viewEmployee(row)" variant="outline-primary" class="mr-1">View</b-button>
                 </template>
               </b-table>
             </div>

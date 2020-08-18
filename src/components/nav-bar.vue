@@ -51,14 +51,14 @@ export default {
       <div class="d-flex">
         <!-- LOGO -->
         <div class="navbar-brand-box">
-          <router-link tag="a" to="/" class="logo logo-dark">
+          <router-link tag="a" to="/employee-dashboard" class="logo logo-dark">
             <span class="logo-lg">
               <img src="@/assets/images/logo1.png" alt height="50" />
             </span>
             Commply
           </router-link>
 
-          <router-link tag="a" to="/" class="logo logo-light">
+          <router-link tag="a" to="/employee-dashboard" class="logo logo-light">
             <span class="logo-lg">
               <img src="@/assets/images/logo1.png" alt height="50" />
             </span>

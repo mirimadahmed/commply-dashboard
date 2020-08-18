@@ -2,6 +2,7 @@
 import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
+import { mapState } from "vuex";
 import api from "@/api";
 
 /**
@@ -74,6 +75,8 @@ export default {
   methods: {
     async fetchReports() {
       this.isLoading = true;
+      this.report.is_owner = this.user.is_owner;
+      this.report.company_id = this.user.company_id ? this.user.company_id : null;
       const { data } = await api.print_reports(this.report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
@@ -83,6 +86,11 @@ export default {
       link.click();
       this.isLoading = false;
     },
+  },
+  computed: {
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
 };
 </script>

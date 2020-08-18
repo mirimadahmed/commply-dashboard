@@ -1,10 +1,16 @@
 <script>
 import api from "@/api";
 import Layout from "../layouts/main";
+import { mapState } from "vuex";
 
 export default {
   components: {
     Layout,
+  },
+  computed: {
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
   mounted() {
     this.fetchReports();
@@ -13,8 +19,8 @@ export default {
     async fetchReports(isDateRange = false) {
       this.isLoading = true;
       const { data } = await api.risk_stats({
-        is_owner: false,
-        company_id: null,
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
         isDateRange,
         ...this.report,
         reportType: this.selected_preset,

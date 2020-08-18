@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const axiosObj = axios.create({
-    baseURL: 'http://localhost/commply-api',
+    baseURL: '.',
     headers: {
         'Cache-Control': 'no-cache'
     }
@@ -9,11 +9,11 @@ const axiosObj = axios.create({
 
 
 export default {
-    adminLogin(admin) {
+    login(setting) {
         let form = new FormData();
-        form.append('type', "admin");
-        form.append('email', admin.email);
-        form.append('password', admin.password);
+        form.append('type', setting.type);
+        form.append('email', setting.email);
+        form.append('password', setting.password);
         return axiosObj.post(`/auth/login.php`, form)
     },
     companies(id) {
@@ -34,6 +34,13 @@ export default {
     },
     employees(id) {
         let url = `/company/employee/get.php`
+        if (id) {
+            url += `?id=${id}`
+        }
+        return axiosObj.get(url)
+    },
+    allEmployees(id) {
+        let url = `/company/employee/all.php`
         if (id) {
             url += `?id=${id}`
         }
@@ -68,8 +75,11 @@ export default {
         form.append('company', owner.company_id);
         return axiosObj.post(`/company/owner/add.php`, form)
     },
-    risks() {
+    risks(id) {
         let url = `/company/risks.php`
+        if (id) {
+            url += `?id=${id}`
+        }
         return axiosObj.get(url)
     },
     updateRisk(risk) {
@@ -87,8 +97,12 @@ export default {
         form.append('company_id', report.company_id);
         return axiosObj.post(`/print_report.php`, form)
     },
-    buildings() {
-        return axiosObj.get(`/company/buildings.php`)
+    buildings(id) {
+        let url = `/company/buildings.php`
+        if (id) {
+            url += `?id=${id}`
+        }
+        return axiosObj.get(url)
     },
     print_declarations(report) {
         let form = new FormData();

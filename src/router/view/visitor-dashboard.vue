@@ -1,4 +1,5 @@
 <script>
+import { mapState } from "vuex";
 import api from "@/api";
 import Layout from "../layouts/main";
 
@@ -9,20 +10,25 @@ export default {
   mounted() {
     this.fetchReports();
   },
+  computed: {
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
+  },
   methods: {
     async fetchReports(isDateRange = false) {
       this.isLoading = true;
       const { data } = await api.visitor_stats({
-        is_owner: false,
-        company_id: null,
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
         isDateRange,
         ...this.report,
         reportType: this.selected_preset,
       });
-      data.locations.forEach(item => {
+      data.locations.forEach((item) => {
         this.charts[0].series.push(item.total_visitor_location);
         this.charts[0].chartOptions.labels.push(item.description);
-      })
+      });
       this.charts[1].series = [
         data.totalScreened,
         data.symptoticVisitors,
@@ -116,8 +122,7 @@ export default {
           series: [],
           chartOptions: {
             xaxis: {
-              categories: [
-              ],
+              categories: [],
             },
             chart: {
               height: 320,

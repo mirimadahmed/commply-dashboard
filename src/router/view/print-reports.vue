@@ -3,6 +3,7 @@ import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
+import { mapState } from "vuex";
 
 /**
  * Advanced table component
@@ -13,6 +14,14 @@ export default {
     meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout, PageHeader },
+  computed: {
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
+    rows() {
+      return this.tableData.length;
+    },
+  },
   data() {
     return {
       employee_number: "",
@@ -77,8 +86,9 @@ export default {
   },
   mounted() {
     // Set the initial number of items
-    this.fetch();
-    this.fetchBuildings();
+    let company_id = this.user.company_id ? this.user.company_id : null;
+    this.fetch(company_id);
+    this.fetchBuildings(company_id);
   },
   methods: {
     /**
@@ -89,16 +99,16 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    async fetch() {
+    async fetch(company_id) {
       this.isLoading = true;
-      const { data } = await api.risks();
+      const { data } = await api.risks(company_id);
       this.isLoading = false;
       this.totalRows = data.length;
       this.tableData = data;
     },
-    async fetchBuildings() {
+    async fetchBuildings(company_id) {
       this.isLoading = true;
-      const { data } = await api.buildings();
+      const { data } = await api.buildings(company_id);
       data.forEach((item) =>
         this.building_options.push({
           text: item.building,
@@ -117,9 +127,9 @@ export default {
       this.isLoading = true;
       const report = {
         employee_number: this.employee_number,
-        is_owner: false,
-        company_id: null
-      }
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
+      };
       const { data } = await api.print_declarations(report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
@@ -134,9 +144,9 @@ export default {
       const report = {
         buliding: this.building_name,
         date: this.building_date,
-        is_owner: false,
-        company_id: null
-      }
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
+      };
       const { data } = await api.print_walkthroughs(report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
@@ -150,9 +160,9 @@ export default {
       this.isLoading = true;
       const report = {
         risk_id: row.item.risk_id,
-        is_owner: false,
-        company_id: null
-      }
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
+      };
       const { data } = await api.print_risk_report(report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
@@ -161,14 +171,6 @@ export default {
       document.body.appendChild(link);
       link.click();
       this.isLoading = false;
-    }
-  },
-  computed: {
-    /**
-     * Total no. of records
-     */
-    rows() {
-      return this.tableData.length;
     },
   },
 };
@@ -288,7 +290,11 @@ export default {
                     variant="outline-primary"
                     class="mr-1"
                   >View</b-button>
-                  <b-button @click="fetchRiskReport(row)" variant="outline-primary" class="mr-1">Print</b-button>
+                  <b-button
+                    @click="fetchRiskReport(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >Print</b-button>
                 </template>
               </b-table>
             </div>

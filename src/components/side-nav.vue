@@ -4,14 +4,20 @@ import MetisMenu from "metismenujs/dist/metismenujs";
 import { layoutMethods } from "@/state/helpers";
 
 import { menuItems } from "./menu";
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
-      menuItems: menuItems
+      menuItems: menuItems,
     };
   },
-  mounted: function() {
+  computed: {
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
+  },
+  mounted: function () {
     document.body.setAttribute("data-sidebar", "dark");
     // eslint-disable-next-line no-unused-vars
     var menuRef = new MetisMenu("#side-menu");
@@ -109,8 +115,11 @@ export default {
      */
     hasItems(item) {
       return item.subItems !== undefined ? item.subItems.length > 0 : false;
+    },
+    showIt(item) {
+      return item.adminOnly ? this.user.is_owner == 'false' : true;
     }
-  }
+  },
 };
 </script>
 
@@ -122,106 +131,108 @@ export default {
     <!-- Left Menu Start -->
     <ul id="side-menu" class="metismenu list-unstyled">
       <template v-for="item in menuItems">
-        <li class="menu-title" v-if="item.isTitle" :key="item.id">{{ $t(item.label) }}</li>
-        <!-- Layouts menu -->
-        <li v-if="item.isLayout" :key="item.id">
-          <a href="javascript: void(0);" class="has-arrow">
-            <i class="bx bx-layout"></i>
-            <span>{{ $t('menuitems.layouts.text') }}</span>
-          </a>
-          <ul class="sub-menu" aria-expanded="false">
-            <li>
-              <a
-                href="javascript: void(0);"
-                @click="change_layout('horizontal')"
-              >{{ $t('menuitems.layouts.list.horizontal') }}</a>
-            </li>
-            <li>
-              <a
-                href="javascript: void(0);"
-                class="side-nav-link-ref"
-                @click="lightSidebar"
-              >{{ $t('menuitems.layouts.list.lightsidebar') }}</a>
-            </li>
-            <li>
-              <a
-                href="javascript: void(0);"
-                class="side-nav-link-ref"
-                @click="compactSidebar"
-              >{{ $t('menuitems.layouts.list.compactsidebar') }}</a>
-            </li>
-            <li>
-              <a
-                href="javascript: void(0);"
-                class="side-nav-link-ref"
-                @click="iconSidebar"
-              >{{ $t('menuitems.layouts.list.iconsidebar') }}</a>
-            </li>
-            <li>
-              <a
-                href="javascript: void(0);"
-                class="side-nav-link-ref"
-                @click="boxedLayout"
-              >{{ $t('menuitems.layouts.list.boxed') }}</a>
-            </li>
-            <li>
-              <a
-                href="javascript: void(0);"
-                class="side-nav-link-ref"
-                @click="coloredSidebar"
-              >{{ $t('menuitems.layouts.list.coloredsidebar') }}</a>
-            </li>
-          </ul>
-        </li>
-        <!--end Layouts menu -->
+        <template v-if="showIt(item)">
+          <li class="menu-title" v-if="item.isTitle" :key="item.id">{{ $t(item.label) }}</li>
+          <!-- Layouts menu -->
+          <li v-if="item.isLayout" :key="item.id">
+            <a href="javascript: void(0);" class="has-arrow">
+              <i class="bx bx-layout"></i>
+              <span>{{ $t('menuitems.layouts.text') }}</span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  @click="change_layout('horizontal')"
+                >{{ $t('menuitems.layouts.list.horizontal') }}</a>
+              </li>
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  class="side-nav-link-ref"
+                  @click="lightSidebar"
+                >{{ $t('menuitems.layouts.list.lightsidebar') }}</a>
+              </li>
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  class="side-nav-link-ref"
+                  @click="compactSidebar"
+                >{{ $t('menuitems.layouts.list.compactsidebar') }}</a>
+              </li>
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  class="side-nav-link-ref"
+                  @click="iconSidebar"
+                >{{ $t('menuitems.layouts.list.iconsidebar') }}</a>
+              </li>
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  class="side-nav-link-ref"
+                  @click="boxedLayout"
+                >{{ $t('menuitems.layouts.list.boxed') }}</a>
+              </li>
+              <li>
+                <a
+                  href="javascript: void(0);"
+                  class="side-nav-link-ref"
+                  @click="coloredSidebar"
+                >{{ $t('menuitems.layouts.list.coloredsidebar') }}</a>
+              </li>
+            </ul>
+          </li>
+          <!--end Layouts menu -->
 
-        <li v-if="!item.isTitle && !item.isLayout" :key="item.id">
-          <a
-            v-if="hasItems(item)"
-            href="javascript:void(0);"
-            class="is-parent"
-            :class="{'has-arrow': !item.badge, 'has-dropdown': item.badge}"
-          >
-            <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
-            <span>{{ $t(item.label) }}</span>
-            <span
-              :class="`badge badge-pill badge-${item.badge.variant} float-right`"
-              v-if="item.badge"
-            >{{ $t(item.badge.text)}}</span>
-          </a>
+          <li v-if="!item.isTitle && !item.isLayout" :key="item.id">
+            <a
+              v-if="hasItems(item)"
+              href="javascript:void(0);"
+              class="is-parent"
+              :class="{'has-arrow': !item.badge, 'has-dropdown': item.badge}"
+            >
+              <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
+              <span>{{ $t(item.label) }}</span>
+              <span
+                :class="`badge badge-pill badge-${item.badge.variant} float-right`"
+                v-if="item.badge"
+              >{{ $t(item.badge.text)}}</span>
+            </a>
 
-          <router-link :to="item.link" v-if="!hasItems(item)" class="side-nav-link-ref">
-            <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
-            <span>{{ $t(item.label) }}</span>
-            <span
-              :class="`badge badge-pill badge-${item.badge.variant} float-right`"
-              v-if="item.badge"
-            >{{$t(item.badge.text)}}</span>
-          </router-link>
+            <router-link :to="item.link" v-if="!hasItems(item)" class="side-nav-link-ref">
+              <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
+              <span>{{ $t(item.label) }}</span>
+              <span
+                :class="`badge badge-pill badge-${item.badge.variant} float-right`"
+                v-if="item.badge"
+              >{{$t(item.badge.text)}}</span>
+            </router-link>
 
-          <ul v-if="hasItems(item)" class="sub-menu" aria-expanded="false">
-            <li v-for="(subitem, index) of item.subItems" :key="index">
-              <router-link
-                :to="subitem.link"
-                v-if="!hasItems(subitem)"
-                class="side-nav-link-ref"
-              >{{ $t(subitem.label) }}</router-link>
-              <a
-                v-if="hasItems(subitem)"
-                class="side-nav-link-a-ref has-arrow"
-                href="javascript:void(0);"
-              >{{ $t(subitem.label) }}</a>
-              <ul v-if="hasItems(subitem)" class="sub-menu mm-collapse" aria-expanded="false">
-                <li v-for="(subSubitem, index) of subitem.subItems" :key="index">
-                  <router-link
-                    :to="subSubitem.link"
-                    class="side-nav-link-ref"
-                  >{{ $t(subSubitem.label) }}</router-link>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
+            <ul v-if="hasItems(item)" class="sub-menu" aria-expanded="false">
+              <li v-for="(subitem, index) of item.subItems" :key="index">
+                <router-link
+                  :to="subitem.link"
+                  v-if="!hasItems(subitem)"
+                  class="side-nav-link-ref"
+                >{{ $t(subitem.label) }}</router-link>
+                <a
+                  v-if="hasItems(subitem)"
+                  class="side-nav-link-a-ref has-arrow"
+                  href="javascript:void(0);"
+                >{{ $t(subitem.label) }}</a>
+                <ul v-if="hasItems(subitem)" class="sub-menu mm-collapse" aria-expanded="false">
+                  <li v-for="(subSubitem, index) of subitem.subItems" :key="index">
+                    <router-link
+                      :to="subSubitem.link"
+                      class="side-nav-link-ref"
+                    >{{ $t(subSubitem.label) }}</router-link>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </template>
       </template>
     </ul>
   </div>

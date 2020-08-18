@@ -4,6 +4,7 @@ import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
 
+import { mapState } from "vuex";
 /**
  * Advanced table component
  */
@@ -60,8 +61,8 @@ export default {
     async fetch() {
       this.isLoading = true;
       const settings = {
-        is_owner: false,
-        company_id: null
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
       };
       const { data } = await api.walkthroughs(settings);
       this.isLoading = false;
@@ -73,9 +74,9 @@ export default {
       const report = {
         buliding: row.item.building,
         date: row.item.date_created,
-        is_owner: false,
-        company_id: null
-      }
+        is_owner: this.user.is_owner,
+        company_id: this.user.company_id ? this.user.company_id : null,
+      };
       const { data } = await api.print_walkthroughs(report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
@@ -93,6 +94,9 @@ export default {
     rows() {
       return this.tableData.length;
     },
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
 };
 </script>
@@ -148,7 +152,11 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button @click="fetchWalkthroughReport(row)" variant="outline-primary" class="mr-1">Print</b-button>
+                  <b-button
+                    @click="fetchWalkthroughReport(row)"
+                    variant="outline-primary"
+                    class="mr-1"
+                  >Print</b-button>
                 </template>
               </b-table>
             </div>

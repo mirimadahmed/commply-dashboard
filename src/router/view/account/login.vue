@@ -1,10 +1,8 @@
 <script>
 import Layout from "../../layouts/auth";
-import {
-  authMethods,
-  authFackMethods,
-  notificationMethods
-} from "@/state/helpers";
+import api from "@/api";
+
+import { notificationMethods, authFackMethods } from "@/state/helpers";
 import { mapState } from "vuex";
 
 import appConfig from "@/app.config";
@@ -16,7 +14,7 @@ import { required, email } from "vuelidate/lib/validators";
 export default {
   page: {
     title: "Login",
-    meta: [{ name: "description", content: appConfig.description }]
+    meta: [{ name: "description", content: appConfig.description }],
   },
   components: { Layout },
   data() {
@@ -26,26 +24,24 @@ export default {
       submitted: false,
       authError: null,
       tryingToLogIn: false,
-      isAuthError: false
+      isAuthError: false,
     };
   },
   validations: {
     email: { required, email },
-    password: { required }
+    password: { required },
   },
   computed: {
-    ...mapState("authfack", ["status"]),
     notification() {
       return this.$store ? this.$store.state.notification : null;
-    }
+    },
   },
   methods: {
-    ...authMethods,
-    ...authFackMethods,
     ...notificationMethods,
+    ...authFackMethods,
     // Try to log the user in with the username
     // and password they provided.
-    tryToLogIn() {
+    tryToLogIn(type) {
       this.submitted = true;
       // stop here if form is invalid
       this.$v.$touch();
@@ -53,39 +49,24 @@ export default {
       if (this.$v.$invalid) {
         return;
       } else {
-        if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
-          this.tryingToLogIn = true;
-          // Reset the authError if it existed.
-          this.authError = null;
-          return (
-            this.logIn({
-              email: this.email,
-              password: this.password
-            })
-              // eslint-disable-next-line no-unused-vars
-              .then(token => {
-                this.tryingToLogIn = false;
-                this.isAuthError = false;
-                // Redirect to the originally requested page, or to the home page
-                this.$router.push(
-                  this.$route.query.redirectFrom || { name: "default" }
-                );
-              })
-              .catch(error => {
-                this.tryingToLogIn = false;
-                this.authError = error ? error : "";
-                this.isAuthError = true;
-              })
-          );
-        } else {
-          const { email, password } = this;
-          if (email && password) {
-            this.login({ email, password });
-          }
+        const { email, password } = this;
+        if (email && password) {
+          this.ourLogin({ email, password, type });
         }
       }
-    }
-  }
+    },
+    async ourLogin(setting) {
+      this.tryingToLogIn = true;
+      const { data } = await api.login(setting);
+      if (data.error) {
+        this.error(data.message);
+      } else {
+        this.success("Logged In");
+        this.login(data);
+      }
+      this.tryingToLogIn = false;
+    },
+  },
 };
 </script>
 
@@ -124,7 +105,7 @@ export default {
               :class="'alert ' + notification.type"
             >{{notification.message}}</div>
 
-            <b-form class="p-2" @submit.prevent="tryToLogIn">
+            <b-form class="p-2" v-if="!tryingToLogIn">
               <b-form-group id="input-group-1" label="Email" label-for="input-1">
                 <b-form-input
                   id="input-1"
@@ -154,9 +135,23 @@ export default {
               </b-form-group>
 
               <div class="mt-3">
-                <b-button type="submit" variant="primary" class="btn-block">Log In</b-button>
+                <b-button
+                  type="submit"
+                  variant="primary"
+                  @click="tryToLogIn('admin')"
+                  class="btn-block"
+                >Admin Log In</b-button>
+                <b-button
+                  type="submit"
+                  variant="primary"
+                  @click="tryToLogIn('owner')"
+                  class="btn-block"
+                >Owner Log In</b-button>
               </div>
             </b-form>
+            <div class="text-center" v-else>
+              <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
+            </div>
           </div>
           <!-- end card-body -->
         </div>
