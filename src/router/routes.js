@@ -23,7 +23,7 @@ export default [
     path: '/risk-dashboard',
     name: 'risk dashboard',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/risk-dashboard'),
   },
   {
     path: '/companies',

@@ -122,6 +122,9 @@ export default {
         return axiosObj.get(`/company/employee/stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&subsidary=${setting.company}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
     },
     visitor_stats(setting) {
-        return axiosObj.get(`/company/visitor_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&subsidary=${setting.company}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+        return axiosObj.get(`/company/visitor_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+    },
+    risk_stats(setting) {
+        return axiosObj.get(`/company/risk_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
     }
 }
