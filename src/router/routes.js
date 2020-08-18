@@ -11,7 +11,7 @@ export default [
     path: '/employee-dashboard',
     name: 'employee dashboard',
     meta: { authRequired: true },
-    component: () => import('./view/blank'),
+    component: () => import('./view/employee-dashboard'),
   },
   {
     path: '/visitor-dashboard',
