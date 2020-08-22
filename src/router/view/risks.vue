@@ -33,7 +33,6 @@ export default {
       sortBy: "company_name",
       sortDesc: false,
       fields: [
-        { key: "status", sortable: true },
         { key: "company_name", sortable: true },
         { key: "site", sortable: true },
         { key: "sector", sortable: true },
@@ -52,6 +51,7 @@ export default {
         // { key: "due_date", sortable: true },
         // { key: "risk_classification", sortable: true },
         { key: "date_created", sortable: true },
+        { key: "status", sortable: true },
         { key: "action", sortable: false },
       ],
       risk: null,
@@ -66,8 +66,6 @@ export default {
         { key: "existing_control_measure", sortable: true },
         { key: "control_effectiveness", sortable: true },
         { key: "addition_controls", sortable: true },
-        { key: "due_date", sortable: true },
-        { key: "risk_classification", sortable: true },
       ],
       risk_options: [
         {
@@ -151,7 +149,9 @@ export default {
             <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
           </div>
           <div class="card-body" v-else>
-            <h4 class="card-title">Manage Risks</h4>
+            <h4 class="card-title text-primary">
+              <i class="fas fa-diagnoses" /> Manage Risks
+            </h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -180,6 +180,8 @@ export default {
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
+                striped
+                hover
                 :items="tableData"
                 :fields="fields"
                 responsive="sm"
@@ -192,18 +194,33 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button
-                    v-b-modal.modal-view
-                    @click="viewRisk(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >View</b-button>
-                  <b-button
-                    v-b-modal.modal-edit
-                    @click="viewRisk(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >Update Status</b-button>
+                  <b-button-group>
+                    <b-button v-b-modal.modal-edit @click="viewRisk(row)" variant="primary" size="sm">
+                      <i class="bx bx-pencil"></i>
+                    </b-button>
+                    <b-button
+                      v-b-modal.modal-view
+                      @click="viewRisk(row)"
+                      variant="success"
+                      size="sm"
+                    >
+                      <i class="fas fa-eye" />
+                    </b-button>
+                  </b-button-group>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                  <i class="fas fa-calendar-day mr-1" />
+                  {{row.item.date_created}}
+                </template>
+                <template v-slot:cell(status)="row">
+                  <span
+                    class="badge badge-pill"
+                    :class="{
+                    'badge-primary': row.item.status === 'Open',
+                    'badge-success': row.item.status === 'Closed',
+                    'badge-danger': row.item.status === 'In Progress'
+                  }"
+                  >{{row.item.status}}</span>
                 </template>
               </b-table>
             </div>
@@ -221,15 +238,25 @@ export default {
         </div>
       </div>
     </div>
-    <b-modal id="modal-view" title="Risk" title-class="font-18">
-      <h5>Risk DETAILS</h5>
-      <div class="row" v-if="risk">
-        <div class="col-12">
-          <h5
-            v-for="field in modalFields"
-            :key="field.key"
-          >{{getName(field.key)}} - {{risk[field.key]}}</h5>
+    <b-modal id="modal-view" title="Risk Details" title-class="font-18">
+      <div v-if="risk">
+        <div class="text-center">
+          <div class="mb-3">
+            <i class="mdi mdi-card-account-details-star-outline text-danger display-4"></i>
+          </div>
+          <h3>Risk Classification</h3>
+          <p>
+            <label class="badge"
+            :class="{
+              'badge-warning': risk.risk_classification === 'Medium Exposure Risk',
+              'badge-info': risk.risk_classification === 'Low Exposure Risk',
+              'badge-danger': risk.risk_classification === 'High Exposure Risk'
+            }">{{ risk.risk_classification }}</label>
+            <br />
+            <i class="fas fa-calendar-day mr-1" /> {{risk.date_created}}
+          </p>
         </div>
+        <b-table stacked :items="[risk]" :fields="modalFields" />
       </div>
     </b-modal>
     <b-modal

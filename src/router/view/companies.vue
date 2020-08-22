@@ -58,6 +58,9 @@ export default {
   },
   mounted() {
     // Set the initial number of items
+    if(this.user.is_owner === "true") {
+      this.$router.push(`/view-company?id=${this.user.company_id}`);
+    }
     let company_id = this.user.company_id ? this.user.company_id : null;
     this.fetch(company_id);
   },
@@ -73,7 +76,7 @@ export default {
     async fetch(company_id) {
       this.isLoading = true;
       const { data } = await api.companies(company_id);
-      if(data.hasOwnProperty('company')) {
+      if (data.hasOwnProperty("company")) {
         this.tableData = [data.company];
         this.totalRows = 1;
       } else {
@@ -114,7 +117,7 @@ export default {
             <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
           </div>
           <div class="card-body" v-else>
-            <h4 class="card-title">Manage Companies</h4>
+            <h4 class="card-title text-primary"><i class="fas fa-briefcase" /> Manage Companies</h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -143,6 +146,8 @@ export default {
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
+                striped
+                hover
                 :items="tableData"
                 :fields="fields"
                 responsive="sm"
@@ -155,13 +160,22 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button
-                    v-b-modal.modal-standard
-                    @click="editCompany(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >Edit</b-button>
-                  <b-button @click="viewCompany(row)" variant="outline-primary">View</b-button>
+                  <b-button-group>
+                    <b-button
+                      v-b-modal.modal-standard
+                      @click="editCompany(row)"
+                      variant="primary"
+                      size="sm"
+                    >
+                      <i class="bx bx-pencil"></i>
+                    </b-button>
+                    <b-button @click="viewCompany(row)" variant="success" size="sm">
+                      <i class="fas fa-eye"></i>
+                    </b-button>
+                  </b-button-group>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                    <i class="fas fa-calendar-day mr-1" /> {{row.item.date_created}}
                 </template>
               </b-table>
             </div>

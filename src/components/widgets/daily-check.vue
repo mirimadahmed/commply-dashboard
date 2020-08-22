@@ -11,6 +11,19 @@ export default {
   data() {
     return {
       showModal: false,
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 10,
+      pageOptions: [10, 25, 50, 100],
+      filter: null,
+      filterOn: [],
+      sortBy: "name",
+      sortDesc: false,
+      fields: [
+        { key: "date_added", sortable: true },
+        { key: "location", sortable: true },
+        { key: "symptoms", sortable: false },
+      ],
       pillMap: {
         sore_throat: "Sore Throat",
         cough: "Cough",
@@ -27,44 +40,64 @@ export default {
       },
     };
   },
+  computed: {
+    /**
+     * Total no. of records
+     */
+    rows() {
+      return this.checks.length;
+    },
+  }
 };
 </script>
 
 <template>
-  <div class="table-responsive mb-0">
-    <table class="table table-centered table-nowrap" v-if="checks.length > 0">
-      <thead class="thead-light">
-        <tr>
-          <th>Date</th>
-          <th>Location</th>
-          <th>Symptoms</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="data in checks" :key="data.daily_id">
-          <td>{{data.date_added}}</td>
-          <td>{{data.location}}</td>
-          <td >
+  <div>
+    <div v-if="checks.length > 0">
+      <div class="table-responsive mb-0">
+        <b-table
+          striped
+          hover
+          :items="checks"
+          :fields="fields"
+          responsive="sm"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+        >
+          <template v-slot:cell(symptoms)="row">
             <span
-              v-for="pill in Object.keys(pillMap)" :key="pill"
+              v-for="pill in Object.keys(pillMap)"
+              :key="pill"
               class="badge badge-pill badge-success font-size-12 mr-1"
-              :class=" { 'badge-danger': `${data[pill]}` === 'YES' }"
+              :class=" { 'badge-danger': `${row.item[pill]}` === 'YES' }"
             >
               {{pillMap[pill]}}
               <i
                 :class=" { 
-                  'bx bx-sad': `${data[pill]}` === 'YES',
-                  'bx bx-happy': `${data[pill]}` === 'NO'
+                  'bx bx-sad': `${row.item[pill]}` === 'YES',
+                  'bx bx-happy': `${row.item[pill]}` === 'NO'
                 }"
               />
             </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-else class="text text-center">
-        No data.
+          </template>
+        </b-table>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="dataTables_paginate paging_simple_numbers float-right">
+            <ul class="pagination pagination-rounded mb-0">
+              <!-- pagination -->
+              <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div v-else class="text text-center">No data.</div>
   </div>
   <!-- end table -->
 </template>

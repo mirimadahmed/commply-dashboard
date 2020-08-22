@@ -32,3 +32,10 @@ export const mutations = {
     },
 };
 
+export const getters = {
+    // Whether the user is currently logged in.
+    loggedIn(state) {
+        return state.status.loggeduser
+    },
+}
+

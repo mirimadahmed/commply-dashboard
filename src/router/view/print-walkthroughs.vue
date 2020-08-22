@@ -26,7 +26,6 @@ export default {
       sortBy: "company_name",
       sortDesc: false,
       fields: [
-        { key: "action", sortable: false },
         { key: "company_name", sortable: true },
         { key: "employee_firstname", sortable: true },
         { key: "location", sortable: true },
@@ -34,6 +33,7 @@ export default {
         { key: "latitude", sortable: true },
         { key: "longitude", sortable: true },
         { key: "date_created", sortable: true },
+        { key: "action", sortable: false },
       ],
       isLoading: false,
       title: "Print Walkthroughs",
@@ -111,7 +111,10 @@ export default {
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Print Walkthrough</h4>
+            <h4 class="card-title text-primary">
+              <i class="fas fa-walking" /> Print Walkthrough
+            </h4>
+
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -140,6 +143,8 @@ export default {
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
+                striped
+                hover
                 :items="tableData"
                 :fields="fields"
                 responsive="sm"
@@ -152,11 +157,15 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button
-                    @click="fetchWalkthroughReport(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >Print</b-button>
+                  <b-button-group>
+                    <b-button @click="fetchWalkthroughReport(row)" variant="primary" size="sm">
+                      <i class="fas fa-print" />
+                    </b-button>
+                  </b-button-group>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                  <i class="fas fa-calendar-day mr-1" />
+                  {{row.item.date_created}}
                 </template>
               </b-table>
             </div>

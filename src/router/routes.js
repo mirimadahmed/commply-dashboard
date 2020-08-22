@@ -1,6 +1,13 @@
 import store from '@/state/store'
 
-export default [
+export default [{
+    path: '/',
+    name: 'default',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import('./view/default'),
+  },
   {
     path: '/employee-dashboard',
     name: 'employee dashboard',
@@ -112,10 +119,10 @@ export default [
     meta: {
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
-        if (store.getters['auth/loggedIn']) {
+          if (store.getters['authfack/loggedIn']) {
           // Redirect to the home page instead
           next({
-            name: 'employee dashboard'
+            name: 'default'
           })
         } else {
           // Continue to the login page
@@ -130,16 +137,12 @@ export default [
     meta: {
       authRequired: true,
       beforeResolve(routeTo, routeFrom, next) {
-        store.dispatch('authfack/logout')
-        const authRequiredOnPreviousRoute = routeFrom.matched.some(
-          (route) => route.push('/login')
-        )
-        // Navigate back to previous page, or home as a fallback
-        next(authRequiredOnPreviousRoute ? {
+        console.log('logout before resolve');
+        next({
           name: 'default'
-        } : {
-          ...routeFrom
         })
+        store.dispatch('authfack/logout')
+
       },
     },
   },

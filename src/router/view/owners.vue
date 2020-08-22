@@ -91,7 +91,10 @@ export default {
       this.isLoading = true;
       const { data } = await api.companies();
       this.isLoading = false;
-      this.company_options = data.map(item => ({value: item.company_id, text: item.company_name}));
+      this.company_options = data.map((item) => ({
+        value: item.company_id,
+        text: item.company_name,
+      }));
     },
     editOwner(row) {
       this.editedOwner = JSON.parse(JSON.stringify(row.item));
@@ -106,7 +109,7 @@ export default {
         owner_firstname: "",
         owner_lastname: "",
         company_id: "",
-      }
+      };
     },
     async saveOwner() {
       this.isLoading = true;
@@ -135,7 +138,7 @@ export default {
       const { data } = await api.addOwner(this.newOwner);
       this.tableData.push(data);
       this.isLoading = false;
-    }
+    },
   },
 };
 </script>
@@ -153,14 +156,10 @@ export default {
           <div class="card-body" v-else>
             <div class="row">
               <div class="col-md-8">
-                <h4 class="card-title">Manage Owners</h4>
+                <h4 class="card-title text-primary"><i class="fas fa-crown" /> Manage Owners</h4>
               </div>
               <div class="col-md-4 text-right">
-                <b-button
-                    v-b-modal.modal-add
-                    @click="addNewOwner"
-                    variant="primary"
-                  >Add Owner</b-button>
+                <b-button v-b-modal.modal-add @click="addNewOwner" variant="primary">Add Owner</b-button>
               </div>
             </div>
             <div class="row mt-4">
@@ -203,17 +202,28 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button
-                    v-b-modal.modal-edit
-                    @click="editOwner(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >Edit</b-button>
-                  <b-button
-                    v-b-modal.modal-delete
-                    @click="deleteOwner(row)"
-                    variant="outline-primary"
-                  >Delete</b-button>
+                  <b-button-group>
+                    <b-button
+                      v-b-modal.modal-edit
+                      @click="editOwner(row)"
+                      variant="primary"
+                      size="sm"
+                    >
+                      <i class="bx bx-pencil"></i>
+                    </b-button>
+                    <b-button
+                      v-b-modal.modal-delete
+                      @click="deleteOwner(row)"
+                      variant="danger"
+                      size="sm"
+                    >
+                      <i class="fas fa-trash-alt"></i>
+                    </b-button>
+                  </b-button-group>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                  <i class="fas fa-calendar-day mr-1" />
+                  {{row.item.date_created}}
                 </template>
               </b-table>
             </div>

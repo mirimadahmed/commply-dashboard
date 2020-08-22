@@ -140,5 +140,8 @@ export default {
     },
     risk_stats(setting) {
         return axiosObj.get(`/company/risk_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+    },
+    homestats(setting) {
+        return axiosObj.get(`/home_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}`)
     }
 }

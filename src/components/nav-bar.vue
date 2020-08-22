@@ -50,19 +50,25 @@ export default {
     <div class="navbar-header">
       <div class="d-flex">
         <!-- LOGO -->
-        <div class="navbar-brand-box">
-          <router-link tag="a" to="/employee-dashboard" class="logo logo-dark">
+        <div class="navbar-brand-box" style="background: #E7E540;">
+          <router-link tag="a" to="/" class="logo logo-dark">
             <span class="logo-lg">
               <img src="@/assets/images/logo1.png" alt height="50" />
+               Commply
             </span>
-            Commply
+            <span class="logo-sm">
+              <img src="@/assets/images/logo1.png" alt height="30" />
+            </span>
           </router-link>
 
-          <router-link tag="a" to="/employee-dashboard" class="logo logo-light">
+          <router-link tag="a" to="/" class="logo logo-light">
             <span class="logo-lg">
               <img src="@/assets/images/logo1.png" alt height="50" />
+               Commply
             </span>
-            Commply
+            <span class="logo-sm">
+              <img src="@/assets/images/logo1.png" alt height="30" />
+            </span>
           </router-link>
         </div>
 

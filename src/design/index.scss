@@ -34,13 +34,16 @@ File: Main Css File
 @import "custom/components/avatar";
 @import "custom/components/helper";
 @import "custom/components/demos";
+@import "custom/components/widgets";
 
 
 // pages
 @import "custom/pages/authentication";
+@import "custom/pages/ecommerce";
 @import "custom/pages/timeline";
 
 // Plugins
+@import "custom/plugins/datepicker";
 @import "custom/plugins/custom-scrollbar";
 
 @import "icons";

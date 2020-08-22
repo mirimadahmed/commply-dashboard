@@ -24,7 +24,7 @@ export default {
         </div>
       </div>
     </div>
-    <div class="card-body pt-0">
+    <div class="card-body pt-0" v-if="profile">
       <div class="row mt-2">
         <div class="col-sm-12">
           <h5 class="font-size-15 text-truncate">{{ profile.company_name }}</h5>

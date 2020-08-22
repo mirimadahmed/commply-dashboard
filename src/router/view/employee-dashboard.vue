@@ -2,15 +2,20 @@
 import api from "@/api";
 import Layout from "../layouts/main";
 import { mapState } from "vuex";
+import DatePicker from "vue2-datepicker";
 
 export default {
   components: {
     Layout,
+    DatePicker
   },
   computed: {
     ...mapState("authfack", {
       user: (state) => state.user,
     }),
+    showFetch() {
+      return this.report.start === null || this.report.end === null
+    }
   },
   mounted() {
     this.fetchSubsidaries();
@@ -96,8 +101,8 @@ export default {
         { value: "month", text: "This Month" },
       ],
       report: {
-        start: "",
-        end: "",
+        start: null,
+        end: null,
         company: "all",
       },
       company_options: [{ value: "all", text: "Please select a subsidary" }],
@@ -357,16 +362,16 @@ export default {
               <h4 class="card-title">SELECT BETWEEN TWO DATES</h4>
               <div class="row">
                 <div class="col">
-                  <b-form-input v-model="report.start" id="start-date" type="date"></b-form-input>
+                  <date-picker v-model="report.start" lang="en"></date-picker>
                 </div>
                 <div class="col">
-                  <b-form-input v-model="report.end" id="end-date" type="date"></b-form-input>
+                  <date-picker v-model="report.end" lang="en"></date-picker>
                 </div>
                 <div class="col">
                   <b-form-select v-model="report.company" :options="company_options"></b-form-select>
                 </div>
                 <div class="col">
-                  <b-button @click="fetchReports(true)" variant="primary">Fetch</b-button>
+                  <b-button :disabled="showFetch" @click="fetchReports(true)" variant="primary">Fetch</b-button>
                 </div>
               </div>
             </div>

@@ -16,12 +16,12 @@ $sidebar-collapsed-width: 70px;
 $sidebar-width-sm: 160px;
 
 // Vertical Sidebar - Dark
-$sidebar-dark-bg: #2a3042; //2c313a
-$sidebar-dark-menu-item-color: #a6b0cf;
-$sidebar-dark-menu-sub-item-color: #79829c;
-$sidebar-dark-menu-item-icon-color: #6a7187;
-$sidebar-dark-menu-item-hover-color: #ffffff;
-$sidebar-dark-menu-item-active-color: #ffffff;
+$sidebar-dark-bg: #2CB5BB; //2c313a
+$sidebar-dark-menu-item-color: white;
+$sidebar-dark-menu-sub-item-color: white;
+$sidebar-dark-menu-item-icon-color: white;
+$sidebar-dark-menu-item-hover-color: #E7E540;
+$sidebar-dark-menu-item-active-color: #E7E540;
 
 // Topbar - Deafult Light
 $header-height: 70px;
@@ -97,16 +97,16 @@ $grays: map-merge(("100": $gray-100,
         "900": $gray-900),
     $grays);
 
-$blue: #556ee6;
+$blue: #2CB5BB;
 $indigo: #564ab1;
 $purple: #6f42c1;
 $pink: #e83e8c;
 $red: #f46a6a;
 $orange: #f1734f;
-$yellow: #f1b44c;
-$green: #34c38f;
+$yellow: #E7E540;
+$green: #08A251;
 $teal: #050505;
-$cyan: #50a5f1;
+$cyan: #c2d2e0;
 
 $colors: ();
 // stylelint-disable-next-line scss/dollar-variable-default

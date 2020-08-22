@@ -4,6 +4,7 @@ import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import { mapState } from "vuex";
 import api from "@/api";
+import DatePicker from "vue2-datepicker";
 
 /**
  * Advanced table component
@@ -13,7 +14,7 @@ export default {
     title: "Get Report",
     meta: [{ name: "description", content: appConfig.description }],
   },
-  components: { Layout, PageHeader },
+  components: { Layout, PageHeader, DatePicker },
   data() {
     return {
       tableData: [],
@@ -74,6 +75,9 @@ export default {
   },
   methods: {
     async fetchReports() {
+      if(this.report.table_name === "" || this.report.start === null || this.report.end === null) {
+        return
+      }
       this.isLoading = true;
       this.report.is_owner = this.user.is_owner;
       this.report.company_id = this.user.company_id ? this.user.company_id : null;
@@ -88,6 +92,9 @@ export default {
     },
   },
   computed: {
+    showFetch() {
+      return this.report.table_name === "" || this.report.start === null || this.report.end === null;
+    },
     ...mapState("authfack", {
       user: (state) => state.user,
     }),
@@ -106,21 +113,21 @@ export default {
             <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
           </div>
           <div class="card-body" v-else>
-            <h4 class="card-title">Select table to extract reports</h4>
+            <h4 class="card-title text-primary">
+              <i class="fas fa-table" /> Export table reports
+            </h4>
             <div class="row">
-              <div class="col-md-4">
-                <b-form-input v-model="report.start" id="start-date" type="date"></b-form-input>
+              <div class="col">
+                  <date-picker v-model="report.start" lang="en"></date-picker>
               </div>
-              <div class="col-md-4">
-                <b-form-input v-model="report.end" id="end-date" type="date"></b-form-input>
+              <div class="col">
+                  <date-picker v-model="report.end" lang="en"></date-picker>
               </div>
-              <div class="col-md-4">
+              <div class="col">
                 <b-form-select v-model="report.table_name" :options="table_options"></b-form-select>
               </div>
-            </div>
-            <div class="row mt-4">
-              <div class="col-md-4">
-                <b-button @click="fetchReports" variant="primary">Fetch</b-button>
+              <div class="col">
+                <b-button :disabled="showFetch" @click="fetchReports" variant="primary">Fetch</b-button>
               </div>
             </div>
           </div>

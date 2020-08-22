@@ -25,6 +25,11 @@ export default {
       this.isLoading = true;
       const { data } = await api.employees(this.id);
       this.checks = data.daily_checks;
+      this.date_options = this.checks.map((item) => ({
+        text: item.date_created,
+        value: item.date_created,
+      }));
+      this.selected_date = this.date_options[0].value;
       if (data.declaration.length > 0) {
         this.hasDeclaration = true;
         let arr = [
@@ -74,6 +79,39 @@ export default {
       this.isLoading = false;
     },
   },
+  computed: {
+    daily_check() {
+      let data = [
+        {
+          name: "YES",
+          data: [],
+        },
+        {
+          name: "NO",
+          data: [],
+        },
+      ];
+      if (this.selected_date !== null) {
+        let yesses = [];
+        let nos = [];
+        const index = this.checks.findIndex(
+          (i) => i.date_created == this.selected_date
+        );
+        Object.keys(this.pillMap).forEach((item) => {
+          if (this.checks[index][item] === "YES") {
+            yesses.push(1);
+            nos.push(0);
+          } else {
+            nos.push(1);
+            yesses.push(0);
+          }
+        });
+        data[0].data = yesses;
+        data[1].data = nos;
+      }
+      return data;
+    },
+  },
   data() {
     return {
       id: null,
@@ -94,6 +132,67 @@ export default {
       checks: [],
       meetings: [],
       profile: null,
+      pillMap: {
+        sore_throat: "Sore Throat",
+        cough: "Cough",
+        loss_of_smell: "Loss Of Smell",
+        body_aches: "Body Aches",
+        fever: "Fever",
+        redness: "Redness",
+        shortness_of_breath: "Shortness of Breath",
+        nausea: "Nausea",
+        vomiting: "Vomiting",
+        diarrhea: "Diarrhea",
+        weakness: "Weakness",
+        contact_with: "Contact with infected",
+      },
+      selected_date: null,
+      date_options: [],
+      chartOptions: {
+        chart: {
+          stacked: true,
+          toolbar: {
+            show: false,
+          },
+          zoom: {
+            enabled: true,
+          },
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "30%",
+            barHeight: "100%",
+            endingShape: "rounded",
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        xaxis: {
+          categories: [
+            "Sore Throat",
+            "Cough",
+            "Loss Of Smell",
+            "Body Aches",
+            "Fever",
+            "Redness",
+            "Shortness of Breath",
+            "Nausea",
+            "Vomiting",
+            "Diarrhea",
+            "Weakness",
+            "Contact with infected",
+          ],
+        },
+        colors: ["#08A251", "#E7E540"],
+        legend: {
+          position: "bottom",
+        },
+        fill: {
+          opacity: 1,
+        },
+      },
     };
   },
 };
@@ -111,39 +210,50 @@ export default {
           <DeclarationStat v-if="hasDeclaration" :series="declarationPercentage" />
         </div>
         <!-- end col -->
-        <div class="col-xl-8" v-if="hasDeclaration">
-          <Declaration :series="declarations" />
+        <div class="col-xl-8">
+          <div class="card py-5">
+            <div class="card-body">
+              <h4 class="card-title mb-4">Daily check</h4>
+              <b-form-select v-model="selected_date" :options="date_options"></b-form-select>
+
+              <apexchart
+                class="apex-charts"
+                type="bar"
+                dir="ltr"
+                height="362"
+                :series="daily_check"
+                :options="chartOptions"
+              ></apexchart>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row my-4">
         <div class="col-xl-12">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title mb-5">Location Logs</h4>
-              <ul class="verti-timeline list-unstyled" v-if="locationLogs.length > 0">
-                <li
-                  class="event-list"
+              <h4 class="card-title mb-5"> <i class="bx bx-map-pin"></i> Location Logs</h4>
+              <div class="row" v-if="locationLogs.length > 0">
+                <div
+                  class="col-6 row"
                   v-for="locationLog in locationLogs"
                   :key="locationLog.location_id"
                 >
-                  <div class="event-timeline-dot">
+                  <div class="col-1">
                     <i class="bx bx-right-arrow-circle font-size-18"></i>
                   </div>
-                  <div class="media">
+                  <div class="col-11 text-left">
                     <div class="mr-3">
                       <h5 class="font-size-14">
                         {{locationLog.time_created}} - {{locationLog.current_location}}
                         <i
                           class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ml-2"
-                        ></i>
+                        ></i> {{locationLog.next_location}}
                       </h5>
                     </div>
-                    <div class="media-body">
-                      <div>{{locationLog.next_location}}</div>
-                    </div>
                   </div>
-                </li>
-              </ul>
+                </div>
+              </div>
               <div v-else class="text text-center">No data.</div>
             </div>
           </div>

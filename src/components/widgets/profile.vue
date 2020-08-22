@@ -24,11 +24,11 @@ export default {
         </div>
       </div>
     </div>
-    <div class="card-body pt-0">
+    <div class="card-body pt-0" v-if="profile">
       <div class="row">
         <div class="col-sm-4">
           <div class="avatar-md profile-user-wid mb-4">
-            <img src="@/assets/images/users/avatar-1.jpg" alt class="img-thumbnail rounded-circle" />
+            <img src="https://api.adorable.io/avatars/285/abott@adorable.png" alt class="img-thumbnail rounded-circle" />
           </div>
           <h5 class="font-size-15 text-truncate">{{ profile.employee_firstname }}</h5>
           <p class="text-muted mb-0 text-truncate">{{ profile.employee_job }}</p>

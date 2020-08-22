@@ -103,7 +103,7 @@ export default {
             <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
           </div>
           <div class="card-body" v-else>
-            <h4 class="card-title">Manage Employees</h4>
+            <h4 class="card-title text-primary"><i class="bx bxs-user-detail" /> Manage Employees</h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -132,6 +132,8 @@ export default {
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
+                striped
+                hover
                 :items="tableData"
                 :fields="fields"
                 responsive="sm"
@@ -144,7 +146,10 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button @click="viewEmployee(row)" variant="outline-primary" class="mr-1">View</b-button>
+                  <b-button @click="viewEmployee(row)" variant="primary" size="sm"><i class="fas fa-eye" /></b-button>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                    <i class="fas fa-calendar-day mr-1" /> {{row.item.date_created}}
                 </template>
               </b-table>
             </div>

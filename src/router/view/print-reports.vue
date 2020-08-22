@@ -4,6 +4,7 @@ import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
 import { mapState } from "vuex";
+import DatePicker from "vue2-datepicker";
 
 /**
  * Advanced table component
@@ -13,8 +14,11 @@ export default {
     title: "Print Reports",
     meta: [{ name: "description", content: appConfig.description }],
   },
-  components: { Layout, PageHeader },
+  components: { Layout, PageHeader, DatePicker },
   computed: {
+    showFetch() {
+      return this.building_name === "" || this.building_date === null;
+    },
     ...mapState("authfack", {
       user: (state) => state.user,
     }),
@@ -37,14 +41,14 @@ export default {
       sortBy: "company_name",
       sortDesc: false,
       fields: [
-        { key: "action", sortable: false },
-        { key: "status", sortable: true },
         { key: "company_name", sortable: true },
         { key: "site", sortable: true },
         { key: "sector", sortable: true },
         { key: "department", sortable: true },
         { key: "work_area", sortable: true },
+        { key: "status", sortable: true },
         { key: "date_created", sortable: true },
+        { key: "action", sortable: false },
       ],
       risk: null,
       modalFields: [
@@ -58,8 +62,6 @@ export default {
         { key: "existing_control_measure", sortable: true },
         { key: "control_effectiveness", sortable: true },
         { key: "addition_controls", sortable: true },
-        { key: "due_date", sortable: true },
-        { key: "risk_classification", sortable: true },
       ],
       isLoading: false,
       title: "Print Reports",
@@ -186,7 +188,9 @@ export default {
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Print Declaration Report</h4>
+            <h4 class="card-title text-primary">
+              <i class="fab fa-wpforms" /> Print Declaration Report
+            </h4>
             <div class="row">
               <div class="col">
                 <b-form-group
@@ -200,7 +204,11 @@ export default {
                 </b-form-group>
               </div>
               <div class="col">
-                <b-button @click="fetchDeclarationReport" variant="primary">Fetch</b-button>
+                <b-button
+                  :disabled="employee_number === ''"
+                  @click="fetchDeclarationReport"
+                  variant="primary"
+                >Fetch</b-button>
               </div>
             </div>
           </div>
@@ -209,7 +217,9 @@ export default {
       <div class="col-12 my-4">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">PRINT WALKTHROUGH REPORT</h4>
+            <h4 class="card-title text-primary">
+              <i class="fas fa-walking" /> Print Walkthrough Report
+            </h4>
             <div class="row">
               <div class="col">
                 <b-form-group
@@ -227,14 +237,18 @@ export default {
                   id="building_date"
                   label-cols-sm="3"
                   label-cols-lg="3"
-                  label="Select Building"
+                  label="Select Date"
                   label-for="building_date"
                 >
-                  <b-form-input v-model="building_date" id="building_date-date" type="date"></b-form-input>
+                  <date-picker v-model="building_date" lang="en"></date-picker>
                 </b-form-group>
               </div>
               <div class="col">
-                <b-button @click="fetchWalkthroughReport" variant="primary">Fetch</b-button>
+                <b-button
+                  :disabled="showFetch"
+                  @click="fetchWalkthroughReport"
+                  variant="primary"
+                >Fetch</b-button>
               </div>
             </div>
           </div>
@@ -243,7 +257,10 @@ export default {
       <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Manage Risks</h4>
+            <h4 class="card-title text-primary">
+              <i class="fas fa-diagnoses" /> Print Risk Report
+            </h4>
+
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -272,6 +289,8 @@ export default {
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
+                striped
+                hover
                 :items="tableData"
                 :fields="fields"
                 responsive="sm"
@@ -284,17 +303,33 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button
-                    v-b-modal.modal-view
-                    @click="viewRisk(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >View</b-button>
-                  <b-button
-                    @click="fetchRiskReport(row)"
-                    variant="outline-primary"
-                    class="mr-1"
-                  >Print</b-button>
+                  <b-button-group>
+                    <b-button
+                      v-b-modal.modal-view
+                      @click="viewRisk(row)"
+                      variant="primary"
+                      size="sm"
+                    >
+                      <i class="fas fa-eye" />
+                    </b-button>
+                    <b-button @click="fetchRiskReport(row)" variant="success" size="sm">
+                      <i class="fas fa-print" />
+                    </b-button>
+                  </b-button-group>
+                </template>
+                <template v-slot:cell(date_created)="row">
+                  <i class="fas fa-calendar-day mr-1" />
+                  {{row.item.date_created}}
+                </template>
+                <template v-slot:cell(status)="row">
+                  <span
+                    class="badge badge-pill"
+                    :class="{
+                    'badge-primary': row.item.status === 'Open',
+                    'badge-success': row.item.status === 'Closed',
+                    'badge-danger': row.item.status === 'In Progress'
+                  }"
+                  >{{row.item.status}}</span>
                 </template>
               </b-table>
             </div>
@@ -312,15 +347,25 @@ export default {
         </div>
       </div>
     </div>
-    <b-modal id="modal-view" title="Risk" title-class="font-18">
-      <h5>Risk DETAILS</h5>
-      <div class="row" v-if="risk">
-        <div class="col-12">
-          <h5
-            v-for="field in modalFields"
-            :key="field.key"
-          >{{getName(field.key)}} - {{risk[field.key]}}</h5>
+    <b-modal id="modal-view" title="Risk Details" title-class="font-18">
+      <div v-if="risk">
+        <div class="text-center">
+          <div class="mb-3">
+            <i class="mdi mdi-card-account-details-star-outline text-danger display-4"></i>
+          </div>
+          <h3>Risk Classification</h3>
+          <p class="font-18 ">
+            <label class="badge"
+            :class="{
+              'badge-warning': risk.risk_classification === 'Medium Exposure Risk',
+              'badge-info': risk.risk_classification === 'Low Exposure Risk',
+              'badge-danger': risk.risk_classification === 'High Exposure Risk'
+            }">{{ risk.risk_classification }}</label>
+            <br />
+            <i class="fas fa-calendar-day mr-1" /> {{risk.date_created}}
+          </p>
         </div>
+        <b-table stacked small :items="[risk]" :fields="modalFields" />
       </div>
     </b-modal>
   </Layout>
