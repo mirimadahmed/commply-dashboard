@@ -31,7 +31,7 @@ export default {
         start: null,
         end: null,
         is_owner: false,
-        company_id: null
+        company_id: null,
       },
       table_options: [
         {
@@ -75,17 +75,23 @@ export default {
   },
   methods: {
     async fetchReports() {
-      if(this.report.table_name === "" || this.report.start === null || this.report.end === null) {
-        return
+      if (
+        this.report.table_name === "" ||
+        this.report.start === null ||
+        this.report.end === null
+      ) {
+        return;
       }
       this.isLoading = true;
       this.report.is_owner = this.user.is_owner;
-      this.report.company_id = this.user.company_id ? this.user.company_id : null;
+      this.report.company_id = this.user.company_id
+        ? this.user.company_id
+        : null;
       const { data } = await api.print_reports(this.report);
       const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", this.report.table_name+"_report.csv");
+      link.setAttribute("download", this.report.table_name + "_report.csv");
       document.body.appendChild(link);
       link.click();
       this.isLoading = false;
@@ -93,7 +99,11 @@ export default {
   },
   computed: {
     showFetch() {
-      return this.report.table_name === "" || this.report.start === null || this.report.end === null;
+      return (
+        this.report.table_name === "" ||
+        this.report.start === null ||
+        this.report.end === null
+      );
     },
     ...mapState("authfack", {
       user: (state) => state.user,
@@ -118,10 +128,10 @@ export default {
             </h4>
             <div class="row">
               <div class="col">
-                  <date-picker v-model="report.start" lang="en"></date-picker>
+                <date-picker type="date" v-model="report.start" format="YYYY-MM-DD" />
               </div>
               <div class="col">
-                  <date-picker v-model="report.end" lang="en"></date-picker>
+                <date-picker type="date" v-model="report.end" format="YYYY-MM-DD" />
               </div>
               <div class="col">
                 <b-form-select v-model="report.table_name" :options="table_options"></b-form-select>

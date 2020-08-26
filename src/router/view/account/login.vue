@@ -72,6 +72,9 @@ export default {
 
 <template>
   <Layout>
+    <div style="position: absolute; top: 0; left: 0; z-index: 0;">
+      <img class="w-100 h-100" src="https://gonxt.tech/commply/wp-content/uploads/2018/12/slice-header-min.png" alt="">
+    </div>
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6 col-xl-5">
         <div class="card overflow-hidden">
@@ -138,15 +141,15 @@ export default {
                 <b-button
                   type="submit"
                   variant="primary"
-                  @click="tryToLogIn('admin')"
-                  class="btn-block"
-                >Admin Log In</b-button>
-                <b-button
-                  type="submit"
-                  variant="primary"
                   @click="tryToLogIn('owner')"
                   class="btn-block"
                 >Owner Log In</b-button>
+                <b-button
+                  type="submit"
+                  variant="primary"
+                  @click="tryToLogIn('admin')"
+                  class="btn-block"
+                >Admin Log In</b-button>
               </div>
             </b-form>
             <div class="text-center" v-else>

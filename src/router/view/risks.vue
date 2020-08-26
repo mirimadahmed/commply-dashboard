@@ -3,6 +3,7 @@ import Layout from "../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "@/app.config";
 import api from "@/api";
+import { mapState } from "vuex";
 
 /**
  * Advanced table component
@@ -94,6 +95,9 @@ export default {
     rows() {
       return this.tableData.length;
     },
+    ...mapState("authfack", {
+      user: (state) => state.user,
+    }),
   },
   mounted() {
     // Set the initial number of items
@@ -110,7 +114,10 @@ export default {
     },
     async fetch() {
       this.isLoading = true;
-      const { data } = await api.risks();
+      let company_id = this.user.company_id
+        ? this.user.company_id
+        : null;
+      const { data } = await api.risks(company_id);
       this.isLoading = false;
       this.totalRows = data.length;
       this.tableData = data;
@@ -195,7 +202,12 @@ export default {
               >
                 <template v-slot:cell(action)="row">
                   <b-button-group>
-                    <b-button v-b-modal.modal-edit @click="viewRisk(row)" variant="primary" size="sm">
+                    <b-button
+                      v-b-modal.modal-edit
+                      @click="viewRisk(row)"
+                      variant="primary"
+                      size="sm"
+                    >
                       <i class="bx bx-pencil"></i>
                     </b-button>
                     <b-button
@@ -246,14 +258,17 @@ export default {
           </div>
           <h3>Risk Classification</h3>
           <p>
-            <label class="badge"
-            :class="{
+            <label
+              class="badge"
+              :class="{
               'badge-warning': risk.risk_classification === 'Medium Exposure Risk',
               'badge-info': risk.risk_classification === 'Low Exposure Risk',
               'badge-danger': risk.risk_classification === 'High Exposure Risk'
-            }">{{ risk.risk_classification }}</label>
+            }"
+            >{{ risk.risk_classification }}</label>
             <br />
-            <i class="fas fa-calendar-day mr-1" /> {{risk.date_created}}
+            <i class="fas fa-calendar-day mr-1" />
+            {{risk.date_created}}
           </p>
         </div>
         <b-table stacked :items="[risk]" :fields="modalFields" />

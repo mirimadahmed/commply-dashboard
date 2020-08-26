@@ -86,7 +86,7 @@ export default [{
     meta: {
       authRequired: true
     },
-    component: () => import('./view/blank'),
+    component: () => import('./view/contact-tracing'),
   },
   {
     path: '/reports',

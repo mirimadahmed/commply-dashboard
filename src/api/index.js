@@ -1,4 +1,5 @@
 import axios from 'axios'
+import moment from 'moment'
 
 const axiosObj = axios.create({
     baseURL: '.',
@@ -91,8 +92,8 @@ export default {
     print_reports(report) {
         let form = new FormData();
         form.append('table_name', report.table_name);
-        form.append('start', report.start);
-        form.append('end', report.end);
+        form.append('start', moment(report.start).format('YYYY-MM-DD'));
+        form.append('end', moment(report.end).format('YYYY-MM-DD'));
         form.append('is_owner', report.is_owner);
         form.append('company_id', report.company_id);
         return axiosObj.post(`/print_report.php`, form)
@@ -114,7 +115,7 @@ export default {
     print_walkthroughs(report) {
         let form = new FormData();
         form.append('buliding', report.buliding);
-        form.append('date', report.date);
+        form.append('date', moment(report.date).format('YYYY-MM-DD'));
         form.append('is_owner', report.is_owner);
         form.append('company_id', report.company_id);
         return axiosObj.post(`/company/print_walkthrough.php`, form)
@@ -133,15 +134,21 @@ export default {
         return axiosObj.get(`/company/owner/subsidaries.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}`);
     },
     employee_stats(setting) {
-        return axiosObj.get(`/company/employee/stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&subsidary=${setting.company}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+        return axiosObj.get(`/company/employee/stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&subsidary=${setting.company}&daterange_report=${setting.isDateRange}&start=${moment(setting.start).format('YYYY-MM-DD')}&end=${moment(setting.end).format('YYYY-MM-DD')}&report=${setting.reportType}`)
     },
     visitor_stats(setting) {
-        return axiosObj.get(`/company/visitor_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+        return axiosObj.get(`/company/visitor_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${moment(setting.start).format('YYYY-MM-DD')}&end=${moment(setting.end).format('YYYY-MM-DD')}&report=${setting.reportType}`)
     },
     risk_stats(setting) {
-        return axiosObj.get(`/company/risk_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${setting.start}&end=${setting.end}&report=${setting.reportType}`)
+        return axiosObj.get(`/company/risk_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}&daterange_report=${setting.isDateRange}&start=${moment(setting.start).format('YYYY-MM-DD')}&end=${moment(setting.end).format('YYYY-MM-DD')}&report=${setting.reportType}`)
     },
     homestats(setting) {
         return axiosObj.get(`/home_stats.php?is_owner=${setting.is_owner}&company_id=${setting.company_id}`)
+    },
+    contact_tracing(setting) {
+        let form = new FormData();
+        form.append('employee_number', setting.employee_number);
+        form.append('date', moment(setting.date).format('YYYY-MM-DDTHH:mm:ss'));
+        return axiosObj.post(`/company/employee/tracing.php`, form)
     }
 }

@@ -29,7 +29,9 @@ export default {
         text: item.date_created,
         value: item.date_created,
       }));
-      this.selected_date = this.date_options[0].value;
+      if (this.date_options.length > 0) {
+        this.selected_date = this.date_options[0].value;
+      }
       if (data.declaration.length > 0) {
         this.hasDeclaration = true;
         let arr = [
@@ -212,7 +214,7 @@ export default {
         <!-- end col -->
         <div class="col-xl-8">
           <div class="card py-5">
-            <div class="card-body">
+            <div class="card-body" v-if="date_options.length > 0">
               <h4 class="card-title mb-4">Daily check</h4>
               <b-form-select v-model="selected_date" :options="date_options"></b-form-select>
 
@@ -225,6 +227,12 @@ export default {
                 :options="chartOptions"
               ></apexchart>
             </div>
+            <div class="card-body" v-else>
+              <h4 class="card-title mb-4">Daily check</h4>
+              <div class="text-center">
+                No data.
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -232,7 +240,9 @@ export default {
         <div class="col-xl-12">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title mb-5"> <i class="bx bx-map-pin"></i> Location Logs</h4>
+              <h4 class="card-title mb-5">
+                <i class="bx bx-map-pin"></i> Location Logs
+              </h4>
               <div class="row" v-if="locationLogs.length > 0">
                 <div
                   class="col-6 row"
@@ -248,7 +258,8 @@ export default {
                         {{locationLog.time_created}} - {{locationLog.current_location}}
                         <i
                           class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ml-2"
-                        ></i> {{locationLog.next_location}}
+                        ></i>
+                        {{locationLog.next_location}}
                       </h5>
                     </div>
                   </div>

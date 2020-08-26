@@ -181,7 +181,7 @@ export default {
           </div>
         </div>
         <div class="col">
-          <b-form-select @change="fetchReports" v-model="selected_preset" :options="date_options"></b-form-select>
+          <b-form-select @change="fetchReports()" v-model="selected_preset" :options="date_options"></b-form-select>
         </div>
       </div>
       <div class="row mb-4">

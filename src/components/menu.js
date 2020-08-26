@@ -54,12 +54,12 @@ export const menuItems = [
         icon: "bx bx-ghost",
         link: "/risk-management"
     },
-    // {
-    //     id: 10,
-    //     label: "Contact Tracing",
-    //     icon: "bx bx-transfer-alt",
-    //     link: "/contact-tracing"
-    // },
+    {
+        id: 10,
+        label: "Contact Tracing",
+        icon: "bx bx-transfer-alt",
+        link: "/contact-tracing"
+    },
     {
         id: 11,
         label: "Get Reports",
