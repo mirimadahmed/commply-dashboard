@@ -132,7 +132,7 @@ export default {
     <ul id="side-menu" class="metismenu list-unstyled">
       <template v-for="item in menuItems">
         <template v-if="showIt(item)">
-          <li class="menu-title" v-if="item.isTitle" :key="item.id">{{ $t(item.label) }}</li>
+          <li class="menu-title" v-if="item.isTitle" :key="item.id">{{ item.label }}</li>
           <!-- Layouts menu -->
           <li v-if="item.isLayout" :key="item.id">
             <a href="javascript: void(0);" class="has-arrow">
@@ -193,20 +193,20 @@ export default {
               :class="{'has-arrow': !item.badge, 'has-dropdown': item.badge}"
             >
               <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
-              <span>{{ $t(item.label) }}</span>
+              <span>{{ item.label }}</span>
               <span
                 :class="`badge badge-pill badge-${item.badge.variant} float-right`"
                 v-if="item.badge"
-              >{{ $t(item.badge.text)}}</span>
+              >{{ item.badge.text }}</span>
             </a>
 
             <router-link :to="item.link" v-if="!hasItems(item)" class="side-nav-link-ref">
               <i :class="`bx ${item.icon}`" v-if="item.icon"></i>
-              <span>{{ $t(item.label) }}</span>
+              <span>{{ item.label }}</span>
               <span
                 :class="`badge badge-pill badge-${item.badge.variant} float-right`"
                 v-if="item.badge"
-              >{{$t(item.badge.text)}}</span>
+              >{{ item.badge.text }}</span>
             </router-link>
 
             <ul v-if="hasItems(item)" class="sub-menu" aria-expanded="false">
@@ -215,18 +215,18 @@ export default {
                   :to="subitem.link"
                   v-if="!hasItems(subitem)"
                   class="side-nav-link-ref"
-                >{{ $t(subitem.label) }}</router-link>
+                >{{ subitem.label }}</router-link>
                 <a
                   v-if="hasItems(subitem)"
                   class="side-nav-link-a-ref has-arrow"
                   href="javascript:void(0);"
-                >{{ $t(subitem.label) }}</a>
+                >{{ subitem.label }}</a>
                 <ul v-if="hasItems(subitem)" class="sub-menu mm-collapse" aria-expanded="false">
                   <li v-for="(subSubitem, index) of subitem.subItems" :key="index">
                     <router-link
                       :to="subSubitem.link"
                       class="side-nav-link-ref"
-                    >{{ $t(subSubitem.label) }}</router-link>
+                    >{{ subSubitem.label }}</router-link>
                   </li>
                 </ul>
               </li>
