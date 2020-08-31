@@ -40,6 +40,20 @@ export default {
         }
         return axiosObj.get(url)
     },
+    updateEmployee(employee) {
+        let form = new FormData();
+        form.append('id', employee.employee_id);
+        form.append('newid', employee.employee_id_number);
+        form.append('firstname', employee.employee_firstname);
+        form.append('middlename', employee.employee_middlename);
+        form.append('lastname', employee.employee_lastname);
+        form.append('job', employee.employee_job);
+        form.append('number', employee.employee_number);
+        form.append('tel', employee.employee_telephone);
+        form.append('company', employee.company_id);
+        form.append('manager', employee.manager_id);
+        return axiosObj.post(`/company/employee/update.php`, form)
+    },
     allEmployees(id) {
         let url = `/company/employee/all.php`
         if (id) {

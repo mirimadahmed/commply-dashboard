@@ -44,6 +44,9 @@ export default {
         { key: "date_created", sortable: true },
         { key: "action", sortable: false },
       ],
+      editedEmployee: null,
+      newEmployee: {},
+      company_options: [],
     };
   },
   computed: {
@@ -61,6 +64,9 @@ export default {
     // Set the initial number of items
     let company_id = this.user.company_id ? this.user.company_id : null;
     this.fetch(company_id);
+    if (!company_id) {
+      this.fetchCompanies();
+    }
   },
   methods: {
     /**
@@ -82,11 +88,41 @@ export default {
         this.totalRows = data.length;
         this.tableData = data;
       }
-
+      this.isLoading = false;
+    },
+    async fetchCompanies() {
+      this.isLoading = true;
+      const { data } = await api.companies(null);
+      data.forEach((element) => {
+        this.company_options.push({
+          text: element.company_name,
+          value: element.company_id,
+        });
+      });
       this.isLoading = false;
     },
     viewEmployee(row) {
       this.$router.push(`/view-employee?id=${row.item.employee_id}`);
+    },
+    editEmployee(row) {
+      this.editedEmployee = JSON.parse(JSON.stringify(row.item));
+    },
+    async saveEmployee() {
+      this.isLoading = true;
+      const { data } = await api.updateEmployee(this.editedEmployee);
+      const index = this.tableData.findIndex(
+        (item) => item.employee_id === this.editedEmployee.employee_id
+      );
+      if (index > -1) {
+        this.tableData[index] = JSON.parse(JSON.stringify(this.editedEmployee));
+      }
+      this.isLoading = false;
+    },
+    setCompanyName(company) {
+      const index = this.company_options.findIndex(item => item.value === company);
+      if(index > -1) {
+        this.editedEmployee.company_name = this.company_options[index].text;
+      }
     },
   },
 };
@@ -103,7 +139,9 @@ export default {
             <b-spinner style="width: 3rem; height: 3rem;" label="Large Spinner"></b-spinner>
           </div>
           <div class="card-body" v-else>
-            <h4 class="card-title text-primary"><i class="bx bxs-user-detail" /> Manage Employees</h4>
+            <h4 class="card-title text-primary">
+              <i class="bx bxs-user-detail" /> Manage Employees
+            </h4>
             <div class="row mt-4">
               <div class="col-sm-12 col-md-6">
                 <div id="tickets-table_length" class="dataTables_length">
@@ -146,10 +184,23 @@ export default {
                 @filtered="onFiltered"
               >
                 <template v-slot:cell(action)="row">
-                  <b-button @click="viewEmployee(row)" variant="primary" size="sm"><i class="fas fa-eye" /></b-button>
+                  <b-button-group>
+                    <b-button
+                      v-b-modal.modal-edit
+                      @click="editEmployee(row)"
+                      variant="primary"
+                      size="sm"
+                    >
+                      <i class="bx bx-pencil"></i>
+                    </b-button>
+                    <b-button @click="viewEmployee(row)" variant="success" size="sm">
+                      <i class="fas fa-eye" />
+                    </b-button>
+                  </b-button-group>
                 </template>
                 <template v-slot:cell(date_created)="row">
-                    <i class="fas fa-calendar-day mr-1" /> {{row.item.date_created}}
+                  <i class="fas fa-calendar-day mr-1" />
+                  {{row.item.date_created}}
                 </template>
               </b-table>
             </div>
@@ -167,5 +218,115 @@ export default {
         </div>
       </div>
     </div>
+    <b-modal
+      id="modal-edit"
+      title="Employee"
+      title-class="font-18"
+      ok-title="Save Changes"
+      cancel-title="Cancel"
+      @ok="saveEmployee"
+    >
+      <h5>EDIT EMPLOYEE DETAILS</h5>
+      <div class="row">
+        <div class="col-12">
+          <form class="form-horizontal" role="form" v-if="editedEmployee">
+            <b-form-group
+              id="employee_number"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Employee ID Number"
+              label-for="employee_number"
+            >
+              <b-form-input id="employee_number" v-model="editedEmployee.employee_id_number"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_firstname"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="First Name"
+              label-for="employee_firstname"
+            >
+              <b-form-input for="employee_firstname" v-model="editedEmployee.employee_firstname"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_middlename"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Middle Name"
+              label-for="employee_middlename"
+            >
+              <b-form-input for="employee_middlename" v-model="editedEmployee.employee_middlename"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_lastname"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Last Name"
+              label-for="employee_lastname"
+            >
+              <b-form-input for="employee_lastname" v-model="editedEmployee.employee_lastname"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_job"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Job"
+              label-for="employee_job"
+            >
+              <b-form-input for="employee_job" v-model="editedEmployee.employee_job"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_number"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Employee Number"
+              label-for="employee_number"
+            >
+              <b-form-input for="employee_number" v-model="editedEmployee.employee_number"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_telephone"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Employee Telephone"
+              label-for="employee_telephone"
+            >
+              <b-form-input for="employee_telephone" v-model="editedEmployee.employee_telephone"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="manager_id"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Manager ID"
+              label-for="manager_id"
+            >
+              <b-form-input for="manager_id" v-model="editedEmployee.manager_id"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              v-if="!user.company_id"
+              id="employee_company_id"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Company"
+              label-for="employee_company_id"
+            >
+              <b-form-select
+                @change="setCompanyName"
+                v-model="editedEmployee.company_id"
+                :options="company_options"
+              ></b-form-select>
+            </b-form-group>
+          </form>
+        </div>
+      </div>
+    </b-modal>
   </Layout>
 </template>
