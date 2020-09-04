@@ -40,6 +40,20 @@ export default {
         }
         return axiosObj.get(url)
     },
+    addEmployee(employee) {
+        let form = new FormData();
+        form.append('id', employee.employee_id_number);
+        form.append('firstname', employee.employee_firstname);
+        form.append('middlename', employee.employee_middlename);
+        form.append('lastname', employee.employee_lastname);
+        form.append('job', employee.employee_job);
+        form.append('num', employee.employee_number);
+        form.append('tel', employee.employee_telephone);
+        form.append('company', employee.company_id);
+        form.append('manager', employee.manager_id);
+        form.append('subsidary', employee.subsidary);
+        return axiosObj.post(`/company/employee/add.php`, form)
+    },
     updateEmployee(employee) {
         let form = new FormData();
         form.append('id', employee.employee_id);
