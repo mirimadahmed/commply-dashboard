@@ -52,6 +52,7 @@ export default {
         form.append('company', employee.company_id);
         form.append('manager', employee.manager_id);
         form.append('subsidary', employee.subsidary);
+        form.append('status', employee.status);
         return axiosObj.post(`/company/employee/add.php`, form)
     },
     updateEmployee(employee) {
@@ -66,6 +67,8 @@ export default {
         form.append('tel', employee.employee_telephone);
         form.append('company', employee.company_id);
         form.append('manager', employee.manager_id);
+        form.append('subsidary', employee.subsidary);
+        form.append('status', employee.status);
         return axiosObj.post(`/company/employee/update.php`, form)
     },
     allEmployees(id) {

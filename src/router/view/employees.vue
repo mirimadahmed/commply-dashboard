@@ -48,6 +48,14 @@ export default {
       newEmployee: {},
       company_options: [],
       subsidary_options: [],
+      status_options: [
+        {
+          text: "Registered", value: "registered"
+        },
+        {
+          text: "Not Registered", value: "not_registered"
+        },
+      ]
     };
   },
   computed: {
@@ -144,6 +152,7 @@ export default {
         company_id: "",
         manager_id: "",
         subsidary: "",
+        status: "not_registered",
         employee_job: "",
         employee_number: "",
         employee_telephone: "",
@@ -366,6 +375,36 @@ export default {
                 :options="company_options"
               ></b-form-select>
             </b-form-group>
+
+            <b-form-group
+              id="employee_subsidary"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Subsidary"
+              label-for="employee_subsidary"
+            >
+              <b-form-select v-model="editedEmployee.subsidary" :options="subsidary_options"></b-form-select>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_subsidary"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Subsidary (add new here if needed)"
+              label-for="employee_subsidary"
+            >
+              <b-form-input v-model="editedEmployee.subsidary"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_status"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Status"
+              label-for="employee_status"
+            >
+              <b-form-select v-model="editedEmployee.status" :options="status_options"></b-form-select>
+            </b-form-group>
           </form>
         </div>
       </div>
@@ -480,6 +519,26 @@ export default {
               label-for="employee_subsidary"
             >
               <b-form-select v-model="newEmployee.subsidary" :options="subsidary_options"></b-form-select>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_subsidary"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Subsidary (add new here if needed)"
+              label-for="employee_subsidary"
+            >
+              <b-form-input v-model="newEmployee.subsidary"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              id="employee_status"
+              label-cols-sm="2"
+              label-cols-lg="3"
+              label="Status"
+              label-for="employee_status"
+            >
+              <b-form-select v-model="newEmployee.status" :options="status_options"></b-form-select>
             </b-form-group>
           </form>
         </div>
