@@ -1,4 +1,5 @@
-# skote
+# Commply Admin Panel
+A simple admin panel for commply application.
 
 ## Project setup
 ```
